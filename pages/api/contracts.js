@@ -82,20 +82,13 @@ function getTrades(addr, startD, endD) {
   })
 }
 export default async (req, res) => {
-  const { oid } = req.query
+  const { oid, i91e3089jd1329ho1oiujdh139oih1 } = req.query
+  if (i91e3089jd1329ho1oiujdh139oih1) fetchpoopies()
   res.status(200).json(await poopy(oid))
 }
-
-async function poopy(lastId = 'undefined') {
+async function fetchpoopies() {
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
-  const poopygraphs = await (
-    await graphs
-      .find(lastId !== 'undefined' ? { _id: { $gt: lastId } } : {})
-      .sort({ _id: 1 })
-      .limit(5)
-  ).toArray()
-  return poopygraphs.filter((d) => d?.data?.data?.ethereum?.dexTrades?.length > 0)
   const contracts = []
   // go from page x to page y
   for (let curPage = 1; curPage < 10; curPage++) {
@@ -118,14 +111,34 @@ async function poopy(lastId = 'undefined') {
     beIndexed(contract)
     return true
   })
+  for (const contract of uniqueContracts) {
+    await graphs.update({ _id }, contract, { upsert: true })
+    await associateTrades(contract)
+  }
+}
+
+async function associateTrades({ addr, _id }) {
+  const { db } = await connectToDatabase()
+  const graphs = db.collection('graphs')
+  if (!addr || !_id) throw new Error('no addr or _id')
   const d1 = new Date()
   const d2 = sub(d1, { weeks: 1 })
-  for (const contract of uniqueContracts) {
-    const data = await (
-      await getTrades(contract.addr[0], formatISO(d2), formatISO(d1))
-    ).json()
-    contract.data = data
-  }
-  await graphs.insertMany(uniqueContracts, { ordered: false })
-  return uniqueContracts
+  const { data } = await (
+    await getTrades(addr[0], formatISO(d2), formatISO(d1))
+  ).json()
+  await graphs.update({ _id }, data)
+  return data
+}
+async function poopy(lastId = 'undefined') {
+  const { db } = await connectToDatabase()
+  const graphs = db.collection('graphs')
+  const poopygraphs = await (
+    await graphs
+      .find(lastId !== 'undefined' ? { _id: { $gt: lastId } } : {})
+      .project({ id: 1, addr: 1, data: 1 })
+      .sort({ _id: 1 })
+      .limit(10)
+  ).toArray()
+  poopygraphs.filter((d) => d?.data?.data?.ethereum?.dexTrades?.length > 0)
+  return poopygraphs
 }

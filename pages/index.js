@@ -50,34 +50,23 @@ export default function Home({ isConnected }) {
   const [lastId, setLastId] = useState('undefined')
   const [fetchNew, setFetchNew] = useState(false)
   const [isFetching, setIsFetching] = useState(true)
-  const [lastFetch, setLastFetch] = useState(new Date())
-  const [timeDelta, setTimeDelta] = useState(5)
   const { data: newData, error } = useSWR(
     `/api/contracts?oid=${lastId}`,
     fetcher
   )
-  const isTime = () => differenceInSeconds(new Date(), lastFetch) > 5
-  useInterval(
-    () => {
-      setTimeDelta((t) => t - 1)
-    },
-    !isTime() ? 1000 : null
-  )
   useEffect(() => {
     setIsFetching(false)
     if (!Array.isArray(newData)) return
-    setLastFetch(new Date())
-    setTimeDelta(6)
     setData((p) => [...p, ...newData])
   }, [newData])
 
   useEffect(() => {
-    if (fetchNew && isTime()) {
+    if (fetchNew) {
       setLastId(graphdata?.[graphdata?.length - 1]?._id)
       setIsFetching(true)
     }
     setFetchNew(false)
-  }, [fetchNew, lastFetch])
+  }, [fetchNew])
   return (
     <Grid container>
       <Head>
@@ -86,7 +75,7 @@ export default function Home({ isConnected }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {graphdata.map(({ commentCount, details, title, created, data }) => {
-        const trades = data?.data?.ethereum?.dexTrades?.map((t) => {
+        const trades = data?.ethereum?.dexTrades?.map((t) => {
           const {
             quotePrice,
             timeInterval: { minute },
@@ -160,15 +149,9 @@ export default function Home({ isConnected }) {
             onClick={(_) => setFetchNew(true)}
           >
             {!isFetching && !fetchNew ? (
-              isTime() ? (
-                <Typography variant="button">Load More</Typography>
-              ) : (
-                timeDelta
-              )
+              <Typography variant="button">Load More Poopy</Typography>
             ) : (
-              <>
-                <CircularProgress color="secondary" size={20} />
-              </>
+              <Typography variant="button">Loading Mr. Poopy</Typography>
             )}
           </Button>
         </Box>
