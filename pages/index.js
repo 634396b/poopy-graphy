@@ -67,6 +67,7 @@ export default function Home({ isConnected }) {
     }
     setFetchNew(false)
   }, [fetchNew])
+  console.log(graphdata)
   return (
     <Grid container>
       <Head>
@@ -74,8 +75,8 @@ export default function Home({ isConnected }) {
         <meta name="description" content="Poop smeared everywhere, delicious" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {graphdata.map(({ commentCount, details, title, created, data }) => {
-        const trades = data?.ethereum?.dexTrades?.map((t) => {
+      {graphdata.map(({ commentCount, details, title, created, ethereum }) => {
+        const trades = ethereum.dexTrades.map((t) => {
           const {
             quotePrice,
             timeInterval: { minute },

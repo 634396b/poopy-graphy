@@ -76,14 +76,21 @@ function getTrades(addr, startD, endD) {
     },
     referrer: 'https://graphql.bitquery.io/ide',
     referrerPolicy: 'strict-origin-when-cross-origin',
-    body: `{"query":"{\\nethereum(network: bsc) {\\n        dexTrades(\\n            options: {asc: \\"timeInterval.minute\\"}\\n            date: {since: \\"${startD}\\", till: \\"${endD}\\"}\\n            exchangeAddress: {in: [\\"0xbcfccbde45ce874adcb698cc183debcf17952812\\", \\"0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73\\"]}\\n            baseCurrency: {is: \\"${addr}\\"}\\n            quoteCurrency: {is: \\"0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c\\"} # WBNB\\n            tradeAmountUsd: {gt: 10}\\n        ) {\\n            timeInterval {\\n                minute(count: 30, format: \\"%Y-%m-%dT%H:%M:%SZ\\")\\n            }\\n            baseCurrency {\\n                symbol\\n                address\\n            }\\n            quoteCurrency {\\n                symbol\\n                address\\n            }\\n\\n            tradeAmount(in: USD)\\n            trades: count\\n            quotePrice\\n            maximum_price: quotePrice(calculate: maximum)\\n            minimum_price: quotePrice(calculate: minimum)\\n            open_price: minimum(of: block, get: quote_price)\\n            close_price: maximum(of: block, get: quote_price)\\n        }\\n    }\\n}\\n","variables":"{}"}`,
+    body: `{"query":"{\\nethereum(network: bsc) {\\n        dexTrades(\\n            options: {asc: \\"timeInterval.minute\\"}\\n            date: {since: \\"${startD}\\", till: \\"${endD}\\"}\\n            exchangeAddress: {in: [\\"0xbcfccbde45ce874adcb698cc183debcf17952812\\", \\"0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73\\"]}\\n            baseCurrency: {is: \\"${addr}\\"}\\n            quoteCurrency: {is: \\"0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c\\"} # WBNB\\n            tradeAmountUsd: {gt: 10}\\n        ) {\\n            timeInterval {\\n                minute(count: 60, format: \\"%Y-%m-%dT%H:%M:%SZ\\")\\n            }\\n            baseCurrency {\\n                symbol\\n                address\\n            }\\n            quoteCurrency {\\n                symbol\\n                address\\n            }\\n\\n            tradeAmount(in: USD)\\n            trades: count\\n            quotePrice\\n            maximum_price: quotePrice(calculate: maximum)\\n            minimum_price: quotePrice(calculate: minimum)\\n            open_price: minimum(of: block, get: quote_price)\\n            close_price: maximum(of: block, get: quote_price)\\n        }\\n    }\\n}\\n","variables":"{}"}`,
     method: 'POST',
     mode: 'cors',
   })
 }
 export default async (req, res) => {
-  const { oid, i91e3089jd1329ho1oiujdh139oih1 } = req.query
+  const { db } = await connectToDatabase()
+  const graphs = db.collection('graphs')
+  const {
+    oid,
+    i91e3089jd1329ho1oiujdh139oih1,
+    e1j2893987hj1e3298h1d3j9h8,
+  } = req.query
   if (i91e3089jd1329ho1oiujdh139oih1) fetchpoopies()
+  if (e1j2893987hj1e3298h1d3j9h8) graphs.drop()
   res.status(200).json(await poopy(oid))
 }
 async function fetchpoopies() {
@@ -112,7 +119,11 @@ async function fetchpoopies() {
     return true
   })
   for (const contract of uniqueContracts) {
-    await graphs.update({ _id }, contract, { upsert: true })
+    await graphs.updateMany(
+      { _id: contract._id },
+      { $set: contract },
+      { upsert: true }
+    )
     await associateTrades(contract)
   }
 }
@@ -120,13 +131,13 @@ async function fetchpoopies() {
 async function associateTrades({ addr, _id }) {
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
-  if (!addr || !_id) throw new Error('no addr or _id')
+  if (!addr || !_id) return console.log('no addr or _id')
   const d1 = new Date()
   const d2 = sub(d1, { weeks: 1 })
   const { data } = await (
     await getTrades(addr[0], formatISO(d2), formatISO(d1))
   ).json()
-  await graphs.update({ _id }, data)
+  await graphs.updateMany({ _id }, { $set: data })
   return data
 }
 async function poopy(lastId = 'undefined') {
@@ -134,8 +145,12 @@ async function poopy(lastId = 'undefined') {
   const graphs = db.collection('graphs')
   const poopygraphs = await (
     await graphs
-      .find(lastId !== 'undefined' ? { _id: { $gt: lastId } } : {})
-      .project({ id: 1, addr: 1, data: 1 })
+      .find(
+        lastId !== 'undefined'
+          ? { _id: { $gt: lastId }, 'ethereum.dexTrades': { $ne: null } }
+          : { 'ethereum.dexTrades': { $ne: null } }
+      )
+      .project({ _id: 1, addr: 1, ethereum: 1 })
       .sort({ _id: 1 })
       .limit(10)
   ).toArray()
