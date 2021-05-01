@@ -133,7 +133,7 @@ async function associateTrades({ addr, _id }) {
   const graphs = db.collection('graphs')
   if (!addr || !_id) return console.log('no addr or _id')
   const d1 = new Date()
-  const d2 = sub(d1, { weeks: 1 })
+  const d2 = sub(d1, { months: 1 })
   const { data } = await (
     await getTrades(addr[0], formatISO(d2), formatISO(d1))
   ).json()
