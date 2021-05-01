@@ -97,7 +97,7 @@ export default function Home({ isConnected }) {
                 <Link
                   color="textPrimary"
                   target="_blank"
-                  href={`https://bscscan.com/token/${addr}`}
+                  href={`https://poocoin.app/tokens/${addr}`}
                   rel="noreferrer"
                 >
                   {addr}
