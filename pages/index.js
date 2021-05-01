@@ -24,6 +24,7 @@ import { connectToDatabase } from '../util/mongodb'
 import useSWR from 'swr'
 import differenceInSeconds from 'date-fns/differenceInSeconds'
 import { useEffect, useState } from 'react'
+import { useInterval } from 'react-use'
 const fetcher = (url) => fetch(url).then((r) => r.json())
 
 const toDecimal = (value) => value.toFixed(Math.abs(Math.log10(value)) + 20)
@@ -50,15 +51,23 @@ export default function Home({ isConnected }) {
   const [fetchNew, setFetchNew] = useState(false)
   const [isFetching, setIsFetching] = useState(true)
   const [lastFetch, setLastFetch] = useState(new Date())
+  const [timeDelta, setTimeDelta] = useState(5)
   const { data: newData, error } = useSWR(
     `/api/contracts?oid=${lastId}`,
     fetcher
   )
   const isTime = () => differenceInSeconds(new Date(), lastFetch) > 5
+  useInterval(
+    () => {
+      setTimeDelta((t) => t - 1)
+    },
+    !isTime() ? 1000 : null
+  )
   useEffect(() => {
     setIsFetching(false)
     if (!Array.isArray(newData)) return
     setLastFetch(new Date())
+    setTimeDelta(6)
     setData((p) => [...p, ...newData])
   }, [newData])
 
@@ -66,8 +75,6 @@ export default function Home({ isConnected }) {
     if (fetchNew && isTime()) {
       setLastId(graphdata?.[graphdata?.length - 1]?._id)
       setIsFetching(true)
-    } else {
-      
     }
     setFetchNew(false)
   }, [fetchNew, lastFetch])
@@ -146,17 +153,21 @@ export default function Home({ isConnected }) {
         )
       })}
       <Grid xs={12} item container justify="center">
-        <Box m={2}>
+        <Box padding={2}>
           <Button
             color="secondary"
             variant="outlined"
             onClick={(_) => setFetchNew(true)}
           >
-            {!isFetching ? (
-              <Typography variant="button">Load More</Typography>
+            {!isFetching && !fetchNew ? (
+              isTime() ? (
+                <Typography variant="button">Load More</Typography>
+              ) : (
+                timeDelta
+              )
             ) : (
               <>
-                <CircularProgress color="secondary" size={18} />
+                <CircularProgress color="secondary" size={20} />
               </>
             )}
           </Button>

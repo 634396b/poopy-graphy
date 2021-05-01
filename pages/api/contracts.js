@@ -95,7 +95,7 @@ async function poopy(lastId = 'undefined') {
       .sort({ _id: 1 })
       .limit(5)
   ).toArray()
-  return poopygraphs
+  return poopygraphs.filter((d) => d?.data?.data?.ethereum?.dexTrades?.length > 0)
   const contracts = []
   // go from page x to page y
   for (let curPage = 1; curPage < 10; curPage++) {
