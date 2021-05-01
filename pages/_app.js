@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core'
 import Brightness from '@material-ui/icons/Brightness6'
 import '../styles/globals.css'
+import { brown, amber } from '@material-ui/core/colors'
 function MyApp({ Component, pageProps }) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
   const [overrideDarkMode, setMode] = React.useState(true)
@@ -18,6 +19,8 @@ function MyApp({ Component, pageProps }) {
     () =>
       createMuiTheme({
         palette: {
+          primary: brown,
+          secondary: amber,
           type: overrideDarkMode === true ? 'dark' : 'light',
         },
       }),
