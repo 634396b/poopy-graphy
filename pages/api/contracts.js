@@ -81,18 +81,24 @@ function getTrades(addr, startD, endD) {
     mode: 'cors',
   })
 }
-export default (req, res) => {}
+export default async (req, res) => {
+  const { oid } = req.query
+  res.status(200).json(await poopy(oid))
+}
 
-async function poopy(page = 1) {
+async function poopy(lastId = 'undefined') {
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
-  const poopygraphs = await (await graphs.find()).toArray()
-  if (poopygraphs.length > 0) {
-    return poopygraphs
-  }
+  const poopygraphs = await (
+    await graphs
+      .find(lastId !== 'undefined' ? { _id: { $gt: lastId } } : {})
+      .sort({ _id: 1 })
+      .limit(5)
+  ).toArray()
+  return poopygraphs
   const contracts = []
   // go from page x to page y
-  for (let curPage = page; curPage < 10; curPage++) {
+  for (let curPage = 1; curPage < 10; curPage++) {
     const { posts, hasNextPage } = await scrape({ page: curPage })
     contracts.push(...posts)
     if (!hasNextPage) break
@@ -122,8 +128,4 @@ async function poopy(page = 1) {
   }
   await graphs.insertMany(uniqueContracts, { ordered: false })
   return uniqueContracts
-}
-
-export async function getData() {
-  return poopy()
 }

@@ -9,11 +9,22 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { format } from 'date-fns'
-import { Grid, Typography, Link, Paper, Box } from '@material-ui/core'
+import {
+  Grid,
+  Typography,
+  Link,
+  Paper,
+  Box,
+  Button,
+  CircularProgress,
+} from '@material-ui/core'
 import { useTheme } from '@material-ui/core/styles'
 import brown from '@material-ui/core/colors/brown'
-import { getData } from './api/contracts'
 import { connectToDatabase } from '../util/mongodb'
+import useSWR from 'swr'
+import differenceInSeconds from 'date-fns/differenceInSeconds'
+import { useEffect, useState } from 'react'
+const fetcher = (url) => fetch(url).then((r) => r.json())
 
 const toDecimal = (value) => value.toFixed(Math.abs(Math.log10(value)) + 20)
 
@@ -32,97 +43,134 @@ const CustomTooltip = ({ active, payload, label, trades }) => {
   return null
 }
 
-export default function Home({ data }) {
+export default function Home({ isConnected }) {
   const theme = useTheme()
+  const [graphdata, setData] = useState([])
+  const [lastId, setLastId] = useState('undefined')
+  const [fetchNew, setFetchNew] = useState(false)
+  const [isFetching, setIsFetching] = useState(true)
+  const [lastFetch, setLastFetch] = useState(new Date())
+  const { data: newData, error } = useSWR(
+    `/api/contracts?oid=${lastId}`,
+    fetcher
+  )
+  const isTime = () => differenceInSeconds(new Date(), lastFetch) > 5
+  useEffect(() => {
+    setIsFetching(false)
+    if (!Array.isArray(newData)) return
+    setLastFetch(new Date())
+    setData((p) => [...p, ...newData])
+  }, [newData])
 
+  useEffect(() => {
+    if (fetchNew && isTime()) {
+      setLastId(graphdata?.[graphdata?.length - 1]?._id)
+      setIsFetching(true)
+    } else {
+      
+    }
+    setFetchNew(false)
+  }, [fetchNew, lastFetch])
   return (
-    <>
+    <Grid container>
       <Head>
         <title>Graphy Poopy</title>
         <meta name="description" content="Poop smeared everywhere, delicious" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Grid container spacing={1}>
-        {data.map(({ commentCount, details, title, created, data }) => {
-          const trades = data?.data?.ethereum?.dexTrades?.map((t) => {
-            const {
-              quotePrice,
-              timeInterval: { minute },
-            } = t
-            const date = format(new Date(minute), 'M/d p')
-            const price = Math.abs(Math.log2(+quotePrice))
-            return { ...t, date, price }
-          })
-          const addr = trades[0].baseCurrency.address
-          const symbol = trades[0].baseCurrency.symbol
-          return (
-            <Grid item xs key={symbol}>
-              <Grid item xs>
-                <Typography align="center" variant="button">
-                  ${symbol}
-                </Typography>
-                <Typography align="center" variant="body1">
-                  <Link
-                    color="textPrimary"
-                    target="_blank"
-                    href={`https://bscscan.com/token/${addr}`}
-                    rel="noreferrer"
-                  >
-                    {addr}
-                  </Link>
-                </Typography>
-              </Grid>
-              <Grid item xs>
-                <ResponsiveContainer width="100%" height={400}>
-                  <LineChart width={600} height={400} data={trades}>
-                    <XAxis dataKey="date" stroke={theme.palette.primary.main} />
-                    <YAxis
-                      stroke={brown['A400']}
-                      name="Price"
-                      tickFormatter={(t) => t.toExponential()}
-                    />
-                    <Tooltip
-                      stroke={brown.A100}
-                      content={<CustomTooltip trades={trades} />}
-                      contentStyle={{
-                        backgroundColor: brown['900'],
-                        color: brown['A100'],
-                      }}
-                      formatter={(value, name) => [
-                        value.toFixed(Math.abs(Math.log10(value))),
-                        trades[0].baseCurrency.symbol,
-                      ]}
-                    />
-                    <CartesianGrid
-                      stroke={theme.palette.action.hover}
-                      strokeDasharray="5 5"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="quotePrice"
-                      label="Price"
-                      stroke={brown.A200}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Grid>
+      {graphdata.map(({ commentCount, details, title, created, data }) => {
+        const trades = data?.data?.ethereum?.dexTrades?.map((t) => {
+          const {
+            quotePrice,
+            timeInterval: { minute },
+          } = t
+          const date = format(new Date(minute), 'M/d p')
+          const price = Math.abs(Math.log2(+quotePrice))
+          return { ...t, date, price }
+        })
+        const addr = trades[0].baseCurrency.address
+        const symbol = trades[0].baseCurrency.symbol
+        return (
+          <Grid item xs={4} key={symbol}>
+            <Grid item xs>
+              <Typography align="center" variant="body1">
+                ${symbol}
+              </Typography>
+              <Typography align="center" variant="body1">
+                <Link
+                  color="textPrimary"
+                  target="_blank"
+                  href={`https://bscscan.com/token/${addr}`}
+                  rel="noreferrer"
+                >
+                  {addr}
+                </Link>
+              </Typography>
             </Grid>
-          )
-        })}
+            <Grid item>
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart width={600} height={400} data={trades}>
+                  <XAxis dataKey="date" stroke={theme.palette.primary.main} />
+                  <YAxis
+                    stroke={brown['A400']}
+                    name="Price"
+                    tickFormatter={(t) => t.toExponential()}
+                  />
+                  <Tooltip
+                    stroke={brown.A100}
+                    content={<CustomTooltip trades={trades} />}
+                    contentStyle={{
+                      backgroundColor: brown['900'],
+                      color: brown['A100'],
+                    }}
+                    formatter={(value, name) => [
+                      value.toFixed(Math.abs(Math.log10(value))),
+                      trades[0].baseCurrency.symbol,
+                    ]}
+                  />
+                  <CartesianGrid
+                    stroke={theme.palette.action.hover}
+                    strokeDasharray="5 5"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="quotePrice"
+                    label="Price"
+                    stroke={brown.A200}
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Grid>
+          </Grid>
+        )
+      })}
+      <Grid xs={12} item container justify="center">
+        <Box m={2}>
+          <Button
+            color="secondary"
+            variant="outlined"
+            onClick={(_) => setFetchNew(true)}
+          >
+            {!isFetching ? (
+              <Typography variant="button">Load More</Typography>
+            ) : (
+              <>
+                <CircularProgress color="secondary" size={18} />
+              </>
+            )}
+          </Button>
+        </Box>
       </Grid>
-    </>
+    </Grid>
   )
 }
 export async function getServerSideProps(context) {
   const { client } = await connectToDatabase()
-
   const isConnected = await client.isConnected()
-  const data = await getData()
   return {
     props: {
       isConnected,
-      data: data.filter((d) => d?.data?.data?.ethereum?.dexTrades?.length > 0),
     },
   }
 }
