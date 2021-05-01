@@ -81,12 +81,13 @@ function getTrades(addr, startD, endD) {
     mode: 'cors',
   })
 }
-export default async (req, res) => {
+export default (req, res) => {}
+
+async function poopy(page) {
   try {
     const d = await fs.promises.readFile('d.json')
-    return res.status(200).json(d)
+    return d
   } catch (e) {}
-  const { page } = req.query
   const contracts = []
   // go from page x to page y
   for (let curPage = page; curPage < 10; curPage++) {
@@ -118,9 +119,9 @@ export default async (req, res) => {
     contract.data = data
   }
   await fs.promises.writeFile('d.json', JSON.stringify(uniqueContracts))
-  res.status(200).json(uniqueContracts)
+  return uniqueContracts
 }
 
 export async function getData() {
-  return fs.promises.readFile('d.json')
+  return poopy()
 }
