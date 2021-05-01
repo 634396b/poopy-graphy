@@ -6,7 +6,6 @@ import {
   YAxis,
   ResponsiveContainer,
   Tooltip,
-  Legend,
   CartesianGrid,
 } from 'recharts'
 import { format } from 'date-fns'
@@ -113,7 +112,7 @@ export default function Home({ data }) {
     </>
   )
 }
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   const res = await fetch('http://localhost:3000/api/contracts?page=1')
   const data = await res.json()
   return {
