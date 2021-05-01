@@ -120,3 +120,7 @@ export default async (req, res) => {
   await fs.promises.writeFile('d.json', JSON.stringify(uniqueContracts))
   res.status(200).json(uniqueContracts)
 }
+
+export async function getData() {
+  return fs.promises.readFile('d.json')
+}

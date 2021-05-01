@@ -12,6 +12,7 @@ import { format } from 'date-fns'
 import { Grid, Typography, Link, Paper, Box } from '@material-ui/core'
 import { useTheme } from '@material-ui/core/styles'
 import brown from '@material-ui/core/colors/brown'
+import { getData } from './api/contracts'
 const toDecimal = (value) => value.toFixed(Math.abs(Math.log10(value)) + 20)
 
 const CustomTooltip = ({ active, payload, label, trades }) => {
@@ -112,9 +113,8 @@ export default function Home({ data }) {
     </>
   )
 }
-export async function getServerSideProps(context) {
-  const res = await fetch('http://localhost:3000/api/contracts?page=1')
-  const data = await res.json()
+export async function getServerSideProps (context) {
+  const data = await getData()
   return {
     props: {
       data: data.filter((d) => d?.data?.data?.ethereum?.dexTrades?.length > 0),
