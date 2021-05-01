@@ -13,6 +13,8 @@ import { Grid, Typography, Link, Paper, Box } from '@material-ui/core'
 import { useTheme } from '@material-ui/core/styles'
 import brown from '@material-ui/core/colors/brown'
 import { getData } from './api/contracts'
+import { connectToDatabase } from '../util/mongodb'
+
 const toDecimal = (value) => value.toFixed(Math.abs(Math.log10(value)) + 20)
 
 const CustomTooltip = ({ active, payload, label, trades }) => {
@@ -32,7 +34,6 @@ const CustomTooltip = ({ active, payload, label, trades }) => {
 
 export default function Home({ data }) {
   const theme = useTheme()
-  typeof window !== 'undefined' && console.log(data)
 
   return (
     <>
@@ -57,18 +58,18 @@ export default function Home({ data }) {
           return (
             <Grid item xs key={symbol}>
               <Grid item xs>
-                <Typography align="center">
-                  <Typography variant="button">${symbol}</Typography>
-                  <Typography variant="body1">
-                    <Link
-                      color="textPrimary"
-                      target="_blank"
-                      href={`https://bscscan.com/token/${addr}`}
-                      rel="noreferrer"
-                    >
-                      {addr}
-                    </Link>
-                  </Typography>
+                <Typography align="center" variant="button">
+                  ${symbol}
+                </Typography>
+                <Typography align="center" variant="body1">
+                  <Link
+                    color="textPrimary"
+                    target="_blank"
+                    href={`https://bscscan.com/token/${addr}`}
+                    rel="noreferrer"
+                  >
+                    {addr}
+                  </Link>
                 </Typography>
               </Grid>
               <Grid item xs>
@@ -113,10 +114,14 @@ export default function Home({ data }) {
     </>
   )
 }
-export async function getServerSideProps (context) {
+export async function getServerSideProps(context) {
+  const { client } = await connectToDatabase()
+
+  const isConnected = await client.isConnected()
   const data = await getData()
   return {
     props: {
+      isConnected,
       data: data.filter((d) => d?.data?.data?.ethereum?.dexTrades?.length > 0),
     },
   }

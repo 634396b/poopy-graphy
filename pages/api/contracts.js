@@ -1,6 +1,6 @@
 import sub from 'date-fns/sub'
 import formatISO from 'date-fns/formatISO'
-import fs from 'fs'
+import { connectToDatabase } from '../../util/mongodb'
 const pkswap = /pancakeswap\.finance\/#\/swap\?outputCurrency\=(0x[a-z0-9]{40})/im
 const pkswap2 = /pancakeswap\.finance\/#\/swap\?inputCurrency\=(0x[a-z0-9]{40})/im
 const contractTxt = /Contract[\n\s\-\:\=]+(0x[a-z0-9]{40})/im
@@ -83,11 +83,13 @@ function getTrades(addr, startD, endD) {
 }
 export default (req, res) => {}
 
-async function poopy(page) {
-  try {
-    const d = await fs.promises.readFile('d.json')
-    return d
-  } catch (e) {}
+async function poopy(page = 1) {
+  const { db } = await connectToDatabase()
+  const graphs = db.collection('graphs')
+  const poopygraphs = await (await graphs.find()).toArray()
+  if (poopygraphs.length > 0) {
+    return poopygraphs
+  }
   const contracts = []
   // go from page x to page y
   for (let curPage = page; curPage < 10; curPage++) {
@@ -118,7 +120,7 @@ async function poopy(page) {
     ).json()
     contract.data = data
   }
-  await fs.promises.writeFile('d.json', JSON.stringify(uniqueContracts))
+  await graphs.insertMany(uniqueContracts, { ordered: false })
   return uniqueContracts
 }
 
