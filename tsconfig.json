@@ -1,0 +1,21 @@
+{
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es6", "dom"],
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@/util/*": ["core/util/*"],
+      "@/canny/*": ["core/canny/*"],
+      "@/bitquery/*": ["core/bitquery/*"],
+      "@/*": ["*"]
+    },
+    "allowJs": true,
+    "noEmit": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "exclude": ["core/bitquery/generated", "node_modules", ".next"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+}

@@ -1,0 +1,10 @@
+generates:
+  ./core/graphql/index.ts:
+    documents: ['core/graphql/queries.graphql', 'core/graphql/custom.graphql']
+    schema: core/graphql/bitquery.graphql
+    config:
+      declarationKind: 'interface' #For duplicate types
+    plugins:
+      - typescript
+      - typescript-document-nodes
+      - typescript-operations
