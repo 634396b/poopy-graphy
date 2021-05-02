@@ -6,7 +6,7 @@ import fetch from 'node-fetch'
 import fs from 'fs'
 import { getHeaders } from './http'
 const graphqlEndpoint = 'https://graphql.bitquery.io'
-const outFolder = 'graphql'
+const outFolder = 'core/graphql'
 const outSchema = `${outFolder}/bitquery.graphql`
 const outSchemaJson = `${outFolder}/bitquery.json`
 const outQueries = `${outFolder}/queries.graphql`
@@ -61,7 +61,7 @@ export async function run() {
   const introspections = await fetchIntrospection()
   const schema = gql.buildClientSchema(introspections)
   await fs.promises.writeFile(outSchema, gql.printSchema(schema))
-  await fs.promises.writeFile(outSchemaJson, JSON.stringify(schema, null, 2))
+  // await fs.promises.writeFile(outSchemaJson, JSON.stringify(schema, null, 2))
 
   const gqlQueries: any[] = []
   const names = {} as { [key: string]: 1 }
@@ -74,15 +74,18 @@ export async function run() {
       const onlyAlphaNum = (x: string) =>
         toProperCase(x.replace(/[^a-zA-Z0-9_ ]+/gim, ''))
       let safeName = onlyAlphaNum(name)
+      let lastSafeName = safeName
+
       let i = 0
       // Only number names sometimes, can't use for gql
-      if (!isNaN(+safeName)) {
-        safeName = `q${safeName}`
+      if (!isNaN(+lastSafeName)) {
+        lastSafeName = `q${lastSafeName}`
       }
       // Duplicate names, just add another number after
-      while (safeName in names) {
-        safeName = `${safeName}v${i++}`
+      while (lastSafeName in names) {
+        lastSafeName = `${safeName}v${++i}`
       }
+      safeName = lastSafeName
       names[safeName] = 1
       document = gql.parse(`query ${safeName}` + query.replace(/^query ?/i, ''))
       const validationErrors = gql.validate(schema, document)

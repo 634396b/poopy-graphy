@@ -1,39 +1,14 @@
 import sub from 'date-fns/sub'
-import { connectToDatabase } from '@util/mongodb'
-import { getHeaders } from '@util/http'
-import { fmtQuery, scrape } from '@util/posts'
+import { connectToDatabase } from 'core/util/mongodb'
+import { getHeaders } from 'core/util/http'
+import { fmtQuery } from 'core/util/posts'
 import type { NextApiRequest, NextApiResponse } from 'next'
-function getTrades(addr: string, start: Date, end: Date) {
-  console.log('Getting trades for', addr)
-  return fetch('https://graphql.bitquery.io/', {
-    ...getHeaders(),
-    body: fmtQuery(start, end, addr),
-    method: 'POST',
-  })
-}
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { db } = await connectToDatabase()
-  const graphs = db.collection('graphs')
   const { oid } = req.query as { oid: string }
   res.status(200).json(await poopy(oid))
 }
 
-interface CannyPost {
-  _id: string
-  authorID: string
-  board: {
-    _id: string
-    name: string
-  }
-  commentCount: number
-  created: Date | string
-  details: string
-  status: 'open' | 'closed'
-  score: number
-  urlName: string
-  title: string
-  viewerVote: number
-}
 async function fetchpoopies() {
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
@@ -69,7 +44,7 @@ async function fetchpoopies() {
   }
 }
 
-async function associateTrades({ addr, _id }) {
+async function associateTrades({ addr, _id }: { addr: string[]; _id: string }) {
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
   if (!addr || !_id) return console.log('no addr or _id')
@@ -79,6 +54,7 @@ async function associateTrades({ addr, _id }) {
   await graphs.updateMany({ _id }, { $set: data })
   return data
 }
+
 async function poopy(lastId = 'undefined') {
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')

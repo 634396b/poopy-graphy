@@ -20,7 +20,7 @@ import {
 } from '@material-ui/core'
 import { useTheme } from '@material-ui/core/styles'
 import brown from '@material-ui/core/colors/brown'
-import { connectToDatabase } from '../util/mongodb'
+import { connectToDatabase } from '../core/util/mongodb'
 import useSWR from 'swr'
 import differenceInSeconds from 'date-fns/differenceInSeconds'
 import { useEffect, useState } from 'react'

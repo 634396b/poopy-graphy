@@ -1,10 +1,12 @@
 generates:
-  ./types/BitQuery.d.ts:
-    schema: graphql/bitquery.graphql
+  ./core/graphql/index.ts:
+    documents: ['core/graphql/queries.graphql', 'core/graphql/custom.graphql']
+    schema: core/graphql/bitquery.graphql
+    config:
+      flattenGeneratedTypes: true
+      dedupeOperationSuffix: true
+      declarationKind: 'interface'
     plugins:
       - typescript
-  ./types/Queries.d.ts:
-    documents: graphql/queries.graphql
-    schema: graphql/bitquery.graphql
-    plugins:
       - typescript-document-nodes
+      - typescript-operations

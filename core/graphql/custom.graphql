@@ -1,0 +1,40 @@
+query TradingAmount(
+  $address: String
+  $quoteAddress: String #"0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+  $from: ISO8601DateTime
+  $till: ISO8601DateTime
+  $minTradeUsd: Float
+  $exchanges: [String!]
+  $intervalMinutes: Int
+) {
+  ethereum(network: bsc) {
+    dexTrades(
+      options: { asc: "timeInterval.minute" }
+      date: { since: $from, till: $till }
+      exchangeAddress: { in: $exchanges }
+      baseCurrency: { is: $address }
+      quoteCurrency: { is: $quoteAddress } # WBNB
+      tradeAmountUsd: { gt: $minTradeUsd }
+    ) {
+      timeInterval {
+        minute(count: $intervalMinutes, format: "%Y-%m-%dT%H:%M:%SZ")
+      }
+      baseCurrency {
+        symbol
+        address
+      }
+      quoteCurrency {
+        symbol
+        address
+      }
+
+      tradeAmount(in: USD)
+      trades: count
+      quotePrice
+      maximum_price: quotePrice(calculate: maximum)
+      minimum_price: quotePrice(calculate: minimum)
+      open_price: minimum(of: block, get: quote_price)
+      close_price: maximum(of: block, get: quote_price)
+    }
+  }
+}

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@util/*": ["util/*"]
+      "@/util/*": ["core/util/*"],
+      "@/canny/*": ["core/canny/*"]
     }
   },
   "includes": ["pages/**/*.ts", "util/**/*.ts"],
