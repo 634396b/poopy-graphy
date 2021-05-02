@@ -2,66 +2,19 @@
 // @module: esnext
 
 import * as gql from 'graphql'
-import fetch from 'node-fetch'
 import fs from 'fs'
-import { getHeaders } from './http'
-const graphqlEndpoint = 'https://graphql.bitquery.io'
+import { onlyAlphaNumeric, toPascalCase } from './strings'
+import { fetchBitQueries, fetchIntrospection } from 'core/bitquery/fetch'
+
 const outFolder = 'core/graphql'
 const outSchema = `${outFolder}/bitquery.graphql`
-const outSchemaJson = `${outFolder}/bitquery.json`
 const outQueries = `${outFolder}/queries.graphql`
-interface BitQueries {
-  msg: null | string
-  queries: [
-    {
-      account_id: number
-      arguments: string
-      config: null
-      createdAt: Date | string
-      deleted: number
-      query: string
-      name: string
-    }
-  ]
-}
 
-async function fetchQueries(): Promise<BitQueries> {
-  return await (
-    await fetch('https://graphql.bitquery.io/ide/api/getqueries', {
-      method: 'GET',
-      ...getHeaders(),
-    })
-  ).json()
-}
-
-async function fetchIntrospection(): Promise<gql.IntrospectionQuery> {
-  const introspectionQuery = gql.getIntrospectionQuery()
-  const introspectionQueryName = 'IntrospectionQuery'
-  const { data } = await (
-    await fetch(graphqlEndpoint, {
-      method: 'POST',
-      body: JSON.stringify({
-        query: introspectionQuery,
-        operationName: introspectionQueryName,
-      }),
-      ...getHeaders(),
-    })
-  ).json()
-  return data
-}
-function toProperCase(str: string) {
-  return str
-    .replace(/\w\S*/g, function (txt) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-    })
-    .replace(/ /gm, '')
-}
 export async function run() {
-  const { queries } = await fetchQueries()
+  const { queries } = await fetchBitQueries()
   const introspections = await fetchIntrospection()
   const schema = gql.buildClientSchema(introspections)
   await fs.promises.writeFile(outSchema, gql.printSchema(schema))
-  // await fs.promises.writeFile(outSchemaJson, JSON.stringify(schema, null, 2))
 
   const gqlQueries: any[] = []
   const names = {} as { [key: string]: 1 }
@@ -71,9 +24,7 @@ export async function run() {
     let document = null
     let str = null
     try {
-      const onlyAlphaNum = (x: string) =>
-        toProperCase(x.replace(/[^a-zA-Z0-9_ ]+/gim, ''))
-      let safeName = onlyAlphaNum(name)
+      let safeName = toPascalCase(onlyAlphaNumeric(name))
       let lastSafeName = safeName
 
       let i = 0

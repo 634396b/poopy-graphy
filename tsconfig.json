@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "paths": {
       "@/util/*": ["core/util/*"],
-      "@/canny/*": ["core/canny/*"]
+      "@/canny/*": ["core/canny/*"],
+      "@/bitquery/*": ["core/bitquery/*"]
     }
   },
   "includes": ["pages/**/*.ts", "util/**/*.ts"],

@@ -3,9 +3,7 @@ generates:
     documents: ['core/graphql/queries.graphql', 'core/graphql/custom.graphql']
     schema: core/graphql/bitquery.graphql
     config:
-      flattenGeneratedTypes: true
-      dedupeOperationSuffix: true
-      declarationKind: 'interface'
+      declarationKind: 'interface' #For duplicate types
     plugins:
       - typescript
       - typescript-document-nodes
