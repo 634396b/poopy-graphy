@@ -10,6 +10,7 @@ const moduleExports = {
   future: {
     webpack5: true,
   },
+  productionBrowserSourceMaps: true,
 }
 
 const SentryWebpackPluginOptions = {
