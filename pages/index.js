@@ -76,6 +76,7 @@ export default function Home({ isConnected }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {graphdata.map(({ commentCount, details, title, created, ethereum }) => {
+        if (ethereum.dexTrades.length === 0) return <></>
         const trades = ethereum.dexTrades.map((t) => {
           const {
             quotePrice,
