@@ -3,17 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@util/*": [
-        "util/*"
-      ]
-    },
+      "@util/*": ["util/*"]
+    }
   },
-  "includes": [
-    "pages/**/*.ts",
-    "util/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    ".next"
-  ]
+  "includes": ["pages/**/*.ts", "util/**/*.ts"],
+  "exclude": ["node_modules", ".next"]
 }

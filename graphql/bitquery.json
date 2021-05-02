@@ -2,11 +2,7 @@
   "_queryType": "Query",
   "_mutationType": null,
   "_subscriptionType": null,
-  "_directives": [
-    "@include",
-    "@skip",
-    "@deprecated"
-  ],
+  "_directives": ["@include", "@skip", "@deprecated"],
   "_typeMap": {
     "Account": "Account",
     "Address": "Address",
