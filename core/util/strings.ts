@@ -6,4 +6,5 @@ export const toPascalCase = (str: string) =>
     )
     .replace(/ /gm, '')
 
-export const onlyAlphaNumeric = (x: string) => x.replace(/[^a-zA-Z0-9_ ]+/gim, '')
+export const onlyAlphaNumeric = (x: string) =>
+  x.replace(/[^a-zA-Z0-9_ ]+/gim, '')
