@@ -1,6 +1,18 @@
-import { MongoClient } from 'mongodb'
+import { Db, MongoClient } from 'mongodb'
 
 const { MONGODB_URI, MONGODB_DB } = process.env
+
+interface MongoConn {
+  client: MongoClient
+  db: Db
+}
+
+declare const global: {
+  mongo: {
+    promise?: Promise<MongoConn>
+    conn?: MongoConn
+  }
+}
 
 if (!MONGODB_URI) {
   throw new Error(
@@ -22,7 +34,7 @@ if (!MONGODB_DB) {
 let cached = global.mongo
 
 if (!cached) {
-  cached = global.mongo = { conn: null, promise: null }
+  cached = global.mongo = { conn: undefined, promise: undefined }
 }
 
 export async function connectToDatabase() {
@@ -36,12 +48,14 @@ export async function connectToDatabase() {
       useUnifiedTopology: true,
     }
 
-    cached.promise = MongoClient.connect(MONGODB_URI, opts).then((client) => {
-      return {
-        client,
-        db: client.db(MONGODB_DB),
+    cached.promise = MongoClient.connect(MONGODB_URI as string, opts).then(
+      (client) => {
+        return {
+          client,
+          db: client.db(MONGODB_DB),
+        }
       }
-    })
+    )
   }
   cached.conn = await cached.promise
   return cached.conn
