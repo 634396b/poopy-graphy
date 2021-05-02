@@ -1,14 +1,34 @@
-import sub from 'date-fns/sub'
+// import sub from 'date-fns/sub'
 import { connectToDatabase } from 'core/util/mongodb'
-import { getHeaders } from 'core/util/http'
-import { fmtQuery } from 'core/util/posts'
+// import { getHeaders } from 'core/util/http'
+// import { fmtQuery } from 'core/util/posts'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { oid } = req.query as { oid: string }
-  res.status(200).json(await poopy(oid))
+  res.status(200).json(await getContracts(oid))
 }
 
+export async function getContracts(lastId = 'undefined') {
+  const { db } = await connectToDatabase()
+  const graphs = db.collection('graphs')
+  const poopygraphs = await (
+    await graphs
+      .find(
+        lastId !== 'undefined'
+          ? { _id: { $gt: lastId }, 'ethereum.dexTrades': { $ne: null } }
+          : { 'ethereum.dexTrades': { $ne: null } }
+      )
+      .project({ _id: 1, addr: 1, ethereum: 1 })
+      .sort({ _id: 1 })
+      .limit(10)
+  ).toArray()
+  poopygraphs.filter((d: any) => d?.data?.data?.ethereum?.dexTrades?.length > 0)
+  return poopygraphs
+}
+
+/**
+ * 
 async function fetchpoopies() {
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
@@ -54,21 +74,4 @@ async function associateTrades({ addr, _id }: { addr: string[]; _id: string }) {
   await graphs.updateMany({ _id }, { $set: data })
   return data
 }
-
-async function poopy(lastId = 'undefined') {
-  const { db } = await connectToDatabase()
-  const graphs = db.collection('graphs')
-  const poopygraphs = await (
-    await graphs
-      .find(
-        lastId !== 'undefined'
-          ? { _id: { $gt: lastId }, 'ethereum.dexTrades': { $ne: null } }
-          : { 'ethereum.dexTrades': { $ne: null } }
-      )
-      .project({ _id: 1, addr: 1, ethereum: 1 })
-      .sort({ _id: 1 })
-      .limit(10)
-  ).toArray()
-  poopygraphs.filter((d) => d?.data?.data?.ethereum?.dexTrades?.length > 0)
-  return poopygraphs
-}
+ */
