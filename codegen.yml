@@ -1,0 +1,10 @@
+generates:
+  ./types/BitQuery.d.ts:
+    schema: graphql/bitquery.graphql
+    plugins:
+      - typescript
+  ./types/Queries.d.ts:
+    documents: graphql/queries.graphql
+    schema: graphql/bitquery.graphql
+    plugins:
+      - typescript-document-nodes
