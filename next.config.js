@@ -14,7 +14,7 @@ const moduleExports = {
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   env: {
-    buildId: process.env.NODE_ENV ==='production' ? buildId : 'development',
+    buildId: process.env.NODE_ENV === 'production' ? buildId : 'development',
   },
   generateBuildId: async () => {
     // You can, for example, get the latest git commit hash here

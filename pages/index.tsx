@@ -57,7 +57,10 @@ function Poop({ tookAPoop, diarrhea }: any) {
         <title>Graphy Poopy</title>
         <meta name="description" content="Poop smeared everywhere, delicious" />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="prefetch" href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}`} />
+        <link
+          rel="prefetch"
+          href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}`}
+        />
       </Head>
       {contracts.map(({ ethereum }: ContractApiProps) => {
         if (ethereum?.dexTrades?.length === 0) return <></>
