@@ -20,20 +20,18 @@ import { useRouter } from 'next/router'
 import { getContracts } from './api/contracts'
 import { NextPageContext } from 'next'
 import { useTheme } from '@material-ui/core'
-const toDecimal = (value: number) =>
-  value.toFixed(Math.abs(Math.log10(value)) + 20)
 
 interface ContractApiProps extends TradingAmountQuery {
   _id: string
   lastId: string
 }
 
-function Home({ tookAPoop, diarrhea }: any) {
+function Poop({ tookAPoop, diarrhea }: any) {
   const theme = useTheme()
   const router = useRouter()
   const [contracts, setContracts] = useState<ContractApiProps[] | []>([])
   const handleFetchNew = () => {
-    router.push(
+    router.replace(
       {
         pathname: '/',
         query: { poop: diarrhea },
@@ -44,19 +42,22 @@ function Home({ tookAPoop, diarrhea }: any) {
       }
     )
   }
+  useEffect(() => {
+    // router.prefetch(`poop=${diarrhea}`)
+  }, [])
 
   useEffect(() => {
     if (tookAPoop && Array.isArray(tookAPoop)) {
       setContracts((p: any) => [...p, ...tookAPoop])
     }
   }, [tookAPoop])
-  console.log(contracts, tookAPoop)
   return (
     <Grid container>
       <Head>
         <title>Graphy Poopy</title>
         <meta name="description" content="Poop smeared everywhere, delicious" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="prefetch" href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}`} />
       </Head>
       {contracts.map(({ ethereum }: ContractApiProps) => {
         if (ethereum?.dexTrades?.length === 0) return <></>
@@ -134,4 +135,4 @@ export async function getServerSideProps(context: NextPageContext) {
   }
 }
 
-export default Home
+export default Poop

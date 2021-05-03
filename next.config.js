@@ -5,12 +5,21 @@
 
 const { withSentryConfig } = require('@sentry/nextjs')
 
+const buildId = 'poop-1'
 const moduleExports = {
   // Your existing module.exports
   future: {
     webpack5: true,
   },
   productionBrowserSourceMaps: false,
+  poweredByHeader: false,
+  env: {
+    buildId: process.env.NODE_ENV ==='production' ? buildId : 'development',
+  },
+  generateBuildId: async () => {
+    // You can, for example, get the latest git commit hash here
+    return buildId
+  },
 }
 
 const SentryWebpackPluginOptions = {
