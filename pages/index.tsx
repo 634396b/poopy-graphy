@@ -42,9 +42,6 @@ function Poop({ tookAPoop, diarrhea }: any) {
       }
     )
   }
-  useEffect(() => {
-    // router.prefetch(`poop=${diarrhea}`)
-  }, [])
 
   useEffect(() => {
     if (tookAPoop && Array.isArray(tookAPoop)) {
