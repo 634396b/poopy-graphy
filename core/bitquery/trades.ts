@@ -1,7 +1,8 @@
-import { scrape } from '@/canny/scrape'
-import { connectToDatabase } from '@/util/mongodb'
-import { differenceInSeconds, sub } from 'date-fns'
-import { getTrades } from './graphql'
+import differenceInSeconds from 'date-fns/differenceInSeconds'
+
+import { scrape } from '$/canny/scrape'
+import { connectToDatabase } from '$/mongodb'
+import { getTrades } from '$/bitquery/graphql'
 
 export async function fetchPosts() {
   const { db } = await connectToDatabase()

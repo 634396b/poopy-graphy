@@ -1,12 +1,11 @@
-import { fetchPosts } from '@/bitquery/trades'
-import { connectToDatabase } from 'core/util/mongodb'
-import { sub } from 'date-fns'
+import { fetchPosts } from '$/core/bitquery/trades'
+import { connectToDatabase } from '$/core/util/mongodb'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { oid, penispussy } = req.query as { oid: string; penispussy: string }
   if (penispussy) fetchPosts()
-  res.status(200).json(await getContracts(oid))
+  res.status(200).json({})
 }
 
 export async function getContracts(lastId = '', start: Date) {

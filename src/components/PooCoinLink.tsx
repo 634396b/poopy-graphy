@@ -23,3 +23,5 @@ export function PooCoinLink({ contractAddress, symbol }: Props) {
     </Typography>
   )
 }
+
+export default PooCoinLink

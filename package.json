@@ -16,10 +16,8 @@
   "dependencies": {
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
-    "@nivo/bar": "^0.69.0",
     "@nivo/core": "^0.69.0",
     "@nivo/line": "^0.69.0",
-    "@sentry/nextjs": "^6.3.5",
     "date-fns": "^2.21.1",
     "graphql": "^15.5.0",
     "mongodb": "^3.6.6",
@@ -29,7 +27,6 @@
     "react-intersection-observer": "^8.31.1",
     "react-use": "^17.2.4",
     "recharts": "^2.0.9",
-    "swr": "^0.5.5",
     "ts-node": "^9.1.1"
   },
   "devDependencies": {
@@ -40,6 +37,7 @@
     "@graphql-codegen/typescript": "^1.22.0",
     "@graphql-codegen/typescript-document-nodes": "^1.17.11",
     "@graphql-codegen/typescript-operations": "^1.17.16",
+    "@sentry/nextjs": "^6.3.5",
     "@tsconfig/recommended": "^1.0.1",
     "@types/mongodb": "^3.6.12",
     "@types/node": "^15.0.1",

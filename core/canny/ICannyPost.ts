@@ -19,3 +19,9 @@ export interface ICannyResponse {
   result: { posts: ICannyPost[]; hasNextPage: boolean }
   error: boolean
 }
+
+export type FetchCanny = (
+  host: string,
+  page: number,
+  sort: string
+) => Promise<ICannyResponse>

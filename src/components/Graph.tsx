@@ -1,7 +1,10 @@
-import { Box, Chip, Grid, Paper, Typography } from '@material-ui/core'
 import withTheme from '@material-ui/core/styles/withTheme'
+import Box from '@material-ui/core/Box'
+import Paper from '@material-ui/core/Paper'
+import Typography from '@material-ui/core/Typography'
 import { ResponsiveLine } from '@nivo/line'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
+
 const toDecimal = (value: number) =>
   value.toFixed(Math.abs(Math.log10(value)) + 5)
 

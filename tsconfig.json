@@ -5,10 +5,15 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/util/*": ["core/util/*"],
-      "@/canny/*": ["core/canny/*"],
-      "@/bitquery/*": ["core/bitquery/*"],
-      "@/*": ["*"]
+      "$/util/*": ["core/util/*"],
+      "$/mongodb": ["core/util/mongodb"],
+      "$/canny/*": ["core/canny/*"],
+      "$/bitquery/*": ["core/bitquery/*"],
+      "$/components/*": ["src/components/*"],
+      "$/hooks/*": ["src/hooks/*"],
+      "$/core/*": ["core/*"],
+      "$/styles/*": ["styles/*"],
+      "$/api/*": ["pages/api/*"]
     },
     "allowJs": true,
     "noEmit": true,

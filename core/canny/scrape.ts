@@ -1,15 +1,11 @@
-import type { ICannyPost, ICannyResponse } from './ICannyPost'
+import type { FetchCanny, ICannyResponse } from './ICannyPost'
+import { isMatchingRegex, getMatchingRegex, cmpAddrs } from '$/util/strings'
 const pkswap = /pancakeswap\.finance\/#\/swap\?outputCurrency\=(0x[a-z0-9]{40})/im
 const pkswap2 = /pancakeswap\.finance\/#\/swap\?inputCurrency\=(0x[a-z0-9]{40})/im
 const contractTxt = /Contract[\n\s\-\:\=]+(0x[a-z0-9]{40})/im
 const bscScanToken = /bscscan\.com\/(token|contract)\/(0x[a-z0-9]{40})\//im
 const regexs = [pkswap, pkswap2, bscScanToken, contractTxt]
-
-async function fetchCanny(
-  host: string,
-  page: number,
-  sort: string
-): Promise<ICannyResponse> {
+const fetchCanny: FetchCanny = async (host, page, sort) => {
   const url = new URL(`https://${host}/api/posts/get`)
   const body = {
     __host: host,
@@ -48,18 +44,11 @@ export async function scrape({
     posts: posts
       .map((post) => {
         const { details } = post
-        const getAddr = (regex: RegExp, str: string) => str.match(regex)?.pop()
-        const getRegex = (regex: RegExp, str: string) =>
-          (str?.match?.(regex)?.length as number) > 1
-        const matchingRegex = regexs.filter((r) => getRegex(r, details))
-        const addrs = matchingRegex.map((r) => getAddr(r, details))
+        const matchingRegex = regexs.filter((r) => isMatchingRegex(r, details))
+        const addrs = matchingRegex.map((r) => getMatchingRegex(r, details))
         if (addrs.length > 1) {
-          const cmpAddrs = (a: string, b: string) =>
-            a.toLowerCase() === b.toLowerCase()
           // check if all addrs are the same
-          const isSameAddress = addrs.every((addr) =>
-            cmpAddrs(addr as string, addrs[0] as string)
-          )
+          const isSameAddress = addrs.every((addr) => cmpAddrs(addr, addrs[0]))
           if (!isSameAddress) {
             console.log('Unmatched addresses', addrs)
             return null
