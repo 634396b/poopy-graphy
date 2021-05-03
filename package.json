@@ -9,6 +9,7 @@
     "lint": "yarn lint:check",
     "lint:write": "prettier --write .",
     "lint:check": "prettier --check .",
+    "types:check": "tsc",
     "build-graphql": "ts-node -e 'require(\"./core/util/graphql\").run()'",
     "build-types": "graphql-codegen",
     "prepare": "husky install"

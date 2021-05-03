@@ -6,8 +6,8 @@ import {
   TradingAmountQuery,
 } from './generated'
 import { DocumentNode, print } from 'graphql'
-import { getHeaders } from '@/util/http'
-import { graphqlEndpoint } from '@/bitquery/constants'
+import { getHeaders } from '$/util/http'
+import { graphqlEndpoint } from '$/bitquery/constants'
 interface Result {
   data: TradingAmountQuery
 }

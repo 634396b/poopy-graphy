@@ -1,4 +1,4 @@
-import { getHeaders } from '@/util/http'
+import { getHeaders } from '$/util/http'
 import { getIntrospectionQuery, IntrospectionQuery } from 'graphql'
 import { graphqlEndpoint, graphqlQueriesEndpoint } from './constants'
 import type { IBitQuery } from './IBitQuery'
