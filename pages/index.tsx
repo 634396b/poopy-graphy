@@ -66,28 +66,11 @@ function Poop({ tookAPoop, diarrhea }: any) {
             href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}`}
           />
         </Head>
-        {contracts.map(({ ethereum, _id }: ContractApiProps) => {
-          if (ethereum?.dexTrades?.length === 0) return <></>
-          const trades = ethereum?.dexTrades?.map((t) => {
-            const { quotePrice, timeInterval } = t
-            const minute = timeInterval?.minute as string
-            const date = format(new Date(minute), 'M/d p')
-            const price = Math.abs(Math.log2(Number(quotePrice)))
-            return { ...t, date, price }
-          })
-          const addr = trades?.[0]?.baseCurrency?.address as string
-          const symbol = trades?.[0]?.baseCurrency?.symbol as string
+        {contracts.map(({ s, a, t, _id }: any) => {
           return (
-            <Grid item xs={12} md={6} lg={4} key={symbol}>
-              <Grid item xs>
-                <PooCoinLink contractAddress={addr} symbol={symbol} />
-              </Grid>
-              <Grid item>
-                <Box height={300} p={0.5}>
-                  <Graph trades={trades} symbol={symbol} />
-                </Box>
-              </Grid>
-            </Grid>
+            <iframe>
+
+            </iframe>
           )
         })}
         <Grid xs={12} item ref={ref}>

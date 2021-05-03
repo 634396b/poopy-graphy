@@ -4,24 +4,27 @@ import React, { useEffect } from 'react'
 
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
-import { Badge, makeStyles, ThemeProvider, Typography } from '@material-ui/core'
+import { Button, makeStyles, ThemeProvider, Typography } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import AppBar from '@material-ui/core/AppBar'
 import Brightness from '@material-ui/icons/Brightness6'
-import Poopy from '@material-ui/icons/BubbleChart'
 import type { AppProps } from 'next/app'
 import useCustomTheme from '@/styles/theme'
+import { useRouter } from 'next/router'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    alignItems: 'around'
   },
   menuButton: {
     marginRight: theme.spacing(2),
     flexGrow: 1,
+    textAlign: 'left'
   },
 }))
 function App({ Component, pageProps }: AppProps) {
   const classes = useStyles()
+  const router = useRouter()
 
   const [theme, toggleDarkMode] = useCustomTheme()
   useEffect(() => {
@@ -37,16 +40,19 @@ function App({ Component, pageProps }: AppProps) {
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <Typography
+            <IconButton
+              onClick={_ => router.replace('/?poop=' + pageProps.diarrhea)}
+              edge="start"
               color="inherit"
-              variant="h6"
-              className={classes.menuButton}
+              aria-label="menu"
             >
-              💩
-            </Typography>
+              <Typography component='span' variant='h6'>💩</Typography>
+            </IconButton>
+            <div
+              className={classes.menuButton}
+            ></div>
             <IconButton
               onClick={() => toggleDarkMode()}
-              edge="start"
               color="inherit"
               aria-label="menu"
             >

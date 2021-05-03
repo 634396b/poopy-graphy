@@ -1,8 +1,9 @@
-import { Box, Chip, Paper, Typography } from '@material-ui/core'
+import { Box, Chip, Grid, Paper, Typography } from '@material-ui/core'
 import withTheme from '@material-ui/core/styles/withTheme'
 import { ResponsiveLine } from '@nivo/line'
 import { format } from 'date-fns'
 import Icon from '@material-ui/icons/AttachMoney'
+import { PooCoinLink } from './PooCoinLink'
 const toDecimal = (value: number) =>
   value.toFixed(Math.abs(Math.log10(value)) + 5)
 
@@ -11,23 +12,29 @@ export function Graph({ theme, trades, symbol }: any) {
     {
       id: symbol,
       data: trades
-        .slice(0, 1000)
-        .map((t: any) => ({ x: t.timeInterval.minute, y: t.quotePrice })),
     },
   ]
   const ToolTip = ({ point }: any) => {
     return (
-      <Paper>
-        <Box p={1}>
-          <Chip icon={<Icon />} label={symbol} color="primary" />
-          <Typography variant="button" component="div" color="textSecondary">
-            {point.data.xFormatted}
-          </Typography>
-          <Typography variant="caption" component="div">
-            {point.data.yFormatted}
-          </Typography>
-        </Box>
-      </Paper>
+      <Grid item xs={12} md={6} lg={4} key={s}>
+        <Grid item xs>
+          <PooCoinLink contractAddress={a} symbol={s} />
+        </Grid>
+        <Grid item>
+          <Box height={300} p={0.5} pr={5}>
+            <Paper>
+              <Box p={1}>
+                <Typography variant="button" component="div" color="textSecondary">
+                  {point.data.xFormatted}
+                </Typography>
+                <Typography variant="caption" component="div">
+                  {point.data.yFormatted}
+                </Typography>
+              </Box>
+            </Paper>
+          </Box>
+        </Grid>
+      </Grid>
     )
   }
   return (
@@ -49,9 +56,9 @@ export function Graph({ theme, trades, symbol }: any) {
         },
         textColor: theme.palette.text.secondary,
       }}
-      xFormat={(d: string) => format(new Date(d), 'MM/dd p')}
+      xFormat={(d: string) => (Date.parse(d) && format(new Date(d), 'MM/dd p')) ?? 'null'}
       yFormat={(f: number) => toDecimal(f)}
-      animate={false}
+      animate={true}
       enablePoints={false}
       useMesh={true}
       enableGridY={true}

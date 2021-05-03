@@ -9,21 +9,55 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.status(200).json(await getContracts(oid))
 }
 
-export async function getContracts(lastId = 'undefined') {
+export async function getContracts(lastId = '') {
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
-  const poopygraphs = await (
-    await graphs
-      .find(
-        lastId !== 'undefined'
-          ? { _id: { $gt: lastId }, 'ethereum.dexTrades': { $ne: null } }
-          : { 'ethereum.dexTrades': { $ne: null } }
-      )
-      .project({ _id: 1, addr: 1, ethereum: 1 })
-      .sort({ _id: 1 })
-      .limit(6)
-  ).toArray()
-  poopygraphs.filter((d: any) => d?.data?.data?.ethereum?.dexTrades?.length > 0)
+  const pp = lastId !== 'undefined' ? { _id: { $gt: lastId } } : {}
+  const poopygraphs = await graphs
+    .aggregate([
+      {
+        $match: {
+          'ethereum.dexTrades': { $ne: null, $not: { $size: 0 } },
+          _id: { $gt: lastId },
+        },
+      },
+      {
+        $project: {
+          'ethereum.dexTrades.timeInterval.minute': 1,
+          'ethereum.dexTrades.quotePrice': 1,
+          'ethereum.dexTrades.baseCurrency.symbol': 1,
+          'ethereum.dexTrades.baseCurrency.address': 1,
+          'ethereum.dexTrades.trades': 1,
+        },
+      },
+      {
+        $project: {
+          trades: '$ethereum.dexTrades',
+        },
+      },
+      { $unwind: '$trades' },
+      {
+        $project: {
+          a: '$trades.baseCurrency.address',
+          x: '$trades.timeInterval.minute',
+          c: '$trades.trades',
+          y: '$trades.quotePrice',
+          s: '$trades.baseCurrency.symbol',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          a: { $first: '$a' },
+          s: { $first: '$s' },
+          t: { $push: '$$ROOT' },
+        },
+      },
+      { $unset: ['t.a', 't.s', 't._id'] },
+      { $sort: { _id: 1 } },
+      { $limit: 3 },
+    ])
+    .toArray()
   return poopygraphs
 }
 
