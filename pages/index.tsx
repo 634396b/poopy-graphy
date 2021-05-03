@@ -71,7 +71,7 @@ function Poop({ tookAPoop, diarrhea }: any) {
         const addr = trades?.[0]?.baseCurrency?.address as string
         const symbol = trades?.[0]?.baseCurrency?.symbol as string
         return (
-          <Grid item xs={4} key={symbol}>
+          <Grid item xs={12} md={6} lg={4} key={symbol}>
             <Grid item xs>
               <Typography align="center" color="secondary">
                 ${symbol}
