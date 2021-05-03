@@ -13,6 +13,7 @@ import { NextPageContext } from 'next'
 import { LinearProgress, useTheme } from '@material-ui/core'
 import Graph from '@/src/components/Graph'
 import { useInView } from 'react-intersection-observer'
+import { sub } from 'date-fns'
 
 interface ContractApiProps extends TradingAmountQuery {
   _id: string
@@ -68,9 +69,16 @@ function Poop({ tookAPoop, diarrhea }: any) {
         </Head>
         {contracts.map(({ s, a, t, _id }: any) => {
           return (
-            <iframe>
-
-            </iframe>
+            <Grid item xs={12} md={6} key={s}>
+              <Grid item xs>
+                <PooCoinLink contractAddress={a} symbol={s} />
+              </Grid>
+              <Grid item>
+                <Box height={300} p={0.5}>
+                  <Graph trades={t} symbol={s} />
+                </Box>
+              </Grid>
+            </Grid>
           )
         })}
         <Grid xs={12} item ref={ref}>
@@ -82,7 +90,7 @@ function Poop({ tookAPoop, diarrhea }: any) {
 }
 export async function getServerSideProps(context: NextPageContext) {
   const poop = context?.query?.poop as string
-  const tookAPoop = await getContracts(poop)
+  const tookAPoop = await getContracts(poop, sub(new Date(), { years: 1 }))
   const diarrhea = tookAPoop?.[tookAPoop?.length - 1]?._id
   return {
     props: { tookAPoop, diarrhea },

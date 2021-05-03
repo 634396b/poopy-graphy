@@ -4,7 +4,12 @@ import React, { useEffect } from 'react'
 
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
-import { Button, makeStyles, ThemeProvider, Typography } from '@material-ui/core'
+import {
+  Button,
+  makeStyles,
+  ThemeProvider,
+  Typography,
+} from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import AppBar from '@material-ui/core/AppBar'
 import Brightness from '@material-ui/icons/Brightness6'
@@ -14,12 +19,12 @@ import { useRouter } from 'next/router'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    alignItems: 'around'
+    alignItems: 'around',
   },
   menuButton: {
     marginRight: theme.spacing(2),
     flexGrow: 1,
-    textAlign: 'left'
+    textAlign: 'left',
   },
 }))
 function App({ Component, pageProps }: AppProps) {
@@ -41,16 +46,16 @@ function App({ Component, pageProps }: AppProps) {
         <AppBar position="static">
           <Toolbar>
             <IconButton
-              onClick={_ => router.replace('/?poop=' + pageProps.diarrhea)}
+              onClick={(_) => router.replace('/?poop=' + pageProps.diarrhea)}
               edge="start"
               color="inherit"
               aria-label="menu"
             >
-              <Typography component='span' variant='h6'>💩</Typography>
+              <Typography component="span" variant="h6">
+                💩
+              </Typography>
             </IconButton>
-            <div
-              className={classes.menuButton}
-            ></div>
+            <div className={classes.menuButton}></div>
             <IconButton
               onClick={() => toggleDarkMode()}
               color="inherit"

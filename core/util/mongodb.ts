@@ -58,5 +58,13 @@ export async function connectToDatabase() {
     )
   }
   cached.conn = await cached.promise
+  cached.conn.db.collection('graphs').createIndex(
+    {
+      //@ts-ignore
+      'ethereum.dexTrades.timeInterval.minute': -1,
+      _id: -1,
+    },
+    { unique: true, dropDups: true }
+  )
   return cached.conn
 }
