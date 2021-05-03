@@ -11,6 +11,9 @@ export const palette = {
   secondary: {
     main: colors.lime[800],
   },
+  text: {
+    primary: colors.lime[100],
+  },
 }
 function useCustomTheme() {
   const [localDarkMode, _setLocalDarkMode, remove] = useLocalStorage('DarkMode')

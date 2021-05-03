@@ -21,7 +21,7 @@ export async function getContracts(lastId = 'undefined') {
       )
       .project({ _id: 1, addr: 1, ethereum: 1 })
       .sort({ _id: 1 })
-      .limit(10)
+      .limit(6)
   ).toArray()
   poopygraphs.filter((d: any) => d?.data?.data?.ethereum?.dexTrades?.length > 0)
   return poopygraphs

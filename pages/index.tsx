@@ -1,13 +1,4 @@
 import Head from 'next/head'
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  Tooltip,
-  CartesianGrid,
-} from 'recharts'
 import format from 'date-fns/format'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -19,7 +10,9 @@ import { PooCoinLink } from '@/src/components/PooCoinLink'
 import { useRouter } from 'next/router'
 import { getContracts } from './api/contracts'
 import { NextPageContext } from 'next'
-import { useTheme } from '@material-ui/core'
+import { LinearProgress, useTheme } from '@material-ui/core'
+import Graph from '@/src/components/Graph'
+import { useInView } from 'react-intersection-observer'
 
 interface ContractApiProps extends TradingAmountQuery {
   _id: string
@@ -27,7 +20,10 @@ interface ContractApiProps extends TradingAmountQuery {
 }
 
 function Poop({ tookAPoop, diarrhea }: any) {
-  const theme = useTheme()
+  const { ref, inView, entry } = useInView({
+    threshold: 0,
+  })
+  const [isLoading, setLoading] = useState(false)
   const router = useRouter()
   const [contracts, setContracts] = useState<ContractApiProps[] | []>([])
   const handleFetchNew = () => {
@@ -42,88 +38,63 @@ function Poop({ tookAPoop, diarrhea }: any) {
       }
     )
   }
+  useEffect(() => {
+    if (inView && entry) {
+      handleFetchNew()
+      setLoading(true)
+    }
+  }, [inView, entry])
 
   useEffect(() => {
     if (tookAPoop && Array.isArray(tookAPoop)) {
       setContracts((p: any) => [...p, ...tookAPoop])
+      setLoading(false)
     }
   }, [tookAPoop])
   return (
-    <Grid container>
-      <Head>
-        <title>Graphy Poopy</title>
-        <meta name="description" content="Poop smeared everywhere, delicious" />
-        <link rel="icon" href="/favicon.ico" />
-        <link
-          rel="prefetch"
-          href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}`}
-        />
-      </Head>
-      {contracts.map(({ ethereum }: ContractApiProps) => {
-        if (ethereum?.dexTrades?.length === 0) return <></>
-        const trades = ethereum?.dexTrades?.map((t) => {
-          const { quotePrice, timeInterval } = t
-          const minute = timeInterval?.minute as string
-          const date = format(new Date(minute), 'M/d p')
-          const price = Math.abs(Math.log2(Number(quotePrice)))
-          return { ...t, date, price }
-        })
-        const addr = trades?.[0]?.baseCurrency?.address as string
-        const symbol = trades?.[0]?.baseCurrency?.symbol as string
-        return (
-          <Grid item xs={12} md={6} lg={4} key={symbol}>
-            <Grid item xs>
-              <Typography align="center" color="secondary">
-                ${symbol}
-              </Typography>
-              <Typography align="center" color="primary">
-                <PooCoinLink contractAddress={addr} />
-              </Typography>
+    <Box paddingTop={1}>
+      <Grid container>
+        <Head>
+          <title>Graphy Poopy</title>
+          <meta
+            name="description"
+            content="Poop smeared everywhere, delicious"
+          />
+          <link rel="icon" href="/favicon.ico" />
+          <link
+            rel="prefetch"
+            href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}`}
+          />
+        </Head>
+        {contracts.map(({ ethereum, _id }: ContractApiProps) => {
+          if (ethereum?.dexTrades?.length === 0) return <></>
+          const trades = ethereum?.dexTrades?.map((t) => {
+            const { quotePrice, timeInterval } = t
+            const minute = timeInterval?.minute as string
+            const date = format(new Date(minute), 'M/d p')
+            const price = Math.abs(Math.log2(Number(quotePrice)))
+            return { ...t, date, price }
+          })
+          const addr = trades?.[0]?.baseCurrency?.address as string
+          const symbol = trades?.[0]?.baseCurrency?.symbol as string
+          return (
+            <Grid item xs={12} md={6} lg={4} key={symbol}>
+              <Grid item xs>
+                <PooCoinLink contractAddress={addr} symbol={symbol} />
+              </Grid>
+              <Grid item>
+                <Box height={300} p={0.5}>
+                  <Graph trades={trades} symbol={symbol} />
+                </Box>
+              </Grid>
             </Grid>
-            <Grid item>
-              <ResponsiveContainer width="100%" height={400}>
-                <LineChart width={600} height={400} data={trades}>
-                  <XAxis dataKey="date" stroke={theme.palette.text.secondary} />
-                  <YAxis
-                    stroke={theme.palette.text.secondary}
-                    tickFormatter={(t) => t.toExponential()}
-                  />
-                  <Tooltip
-                    itemStyle={{
-                      color: theme.palette.secondary.main,
-                    }}
-                    contentStyle={{
-                      color: theme.palette.secondary.main,
-                      backgroundColor: theme.palette.text.primary,
-                    }}
-                  />
-                  <CartesianGrid
-                    stroke={theme.palette.divider}
-                    strokeDasharray="5 5"
-                  />
-                  <Line
-                    stroke={theme.palette.primary.main}
-                    dataKey="quotePrice"
-                    dot={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </Grid>
-          </Grid>
-        )
-      })}
-      <Grid xs={12} item container justify="center">
-        <Box padding={2}>
-          <Button
-            color="secondary"
-            variant="outlined"
-            onClick={(_) => handleFetchNew()}
-          >
-            <Typography variant="button">Load More Poopy</Typography>
-          </Button>
-        </Box>
+          )
+        })}
+        <Grid xs={12} item ref={ref}>
+          <LinearProgress className="loading" />
+        </Grid>
       </Grid>
-    </Grid>
+    </Box>
   )
 }
 export async function getServerSideProps(context: NextPageContext) {
