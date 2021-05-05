@@ -71,11 +71,13 @@ function Poop({ tookAPoop, diarrhea }: any) {
         {contracts.map(({ s, a, t, _id }: any) => {
           return (
             <Grid item xs={12} md={6} key={s}>
-              <Grid item xs>
-                <PooCoinLink contractAddress={a} symbol={s} />
+              <Grid item xs={12}>
+                <Box height={100} my={2}>
+                  <PooCoinLink contractAddress={a} symbol={s} />
+                </Box>
               </Grid>
               <Grid item>
-                <Box height={300} p={0.5}>
+                <Box height={500} pl={5} ml={5}>
                   <Graph trades={t} symbol={s} />
                 </Box>
               </Grid>

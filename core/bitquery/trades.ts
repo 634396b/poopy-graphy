@@ -1,7 +1,7 @@
 import differenceInSeconds from 'date-fns/differenceInSeconds'
 
 import { scrape } from '$/canny/scrape'
-import { connectToDatabase } from '$/mongodb'
+import { connectToDatabase } from '$/core/util/mongodb'
 import { getTrades } from '$/bitquery/graphql'
 
 export async function fetchPosts() {

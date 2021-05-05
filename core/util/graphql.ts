@@ -1,6 +1,3 @@
-// @target: es2017
-// @module: esnext
-
 import * as gql from 'graphql'
 import fs from 'fs'
 import { onlyAlphaNumeric, toPascalCase } from './strings'

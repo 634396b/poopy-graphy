@@ -1,80 +1,74 @@
 import withTheme from '@material-ui/core/styles/withTheme'
-import Box from '@material-ui/core/Box'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
-import { ResponsiveLine } from '@nivo/line'
 import format from 'date-fns/format'
+import React from 'react'
+import * as V from 'victory'
+
+const width = 500
 
 const toDecimal = (value: number) =>
   value.toFixed(Math.abs(Math.log10(value)) + 5)
 
 function Graph({ theme, trades, symbol }: any) {
-  const data = [
-    {
-      id: symbol,
-      data: trades,
-    },
-  ]
-  const ToolTip = ({ point }: any) => {
-    return (
-      <Paper>
-        <Box p={1}>
-          <Typography variant="button" component="div" color="textSecondary">
-            {point.data.xFormatted}
-          </Typography>
-          <Typography variant="caption" component="div">
-            {point.data.yFormatted}
-          </Typography>
-        </Box>
-      </Paper>
-    )
-  }
+  const [zoomDomain, setZoomDomain] = React.useState({})
+  const [brushDomain, setBrushDomain] = React.useState({})
   return (
-    <ResponsiveLine
-      margin={{ top: 10, right: 25, bottom: 50, left: 75 }}
-      xScale={{ type: 'point' }}
-      yScale={{
-        type: 'linear',
-        min: 'auto',
-        max: 'auto',
-        stacked: true,
-        reverse: false,
-      }}
-      theme={{
-        grid: {
-          line: {
-            stroke: theme.palette.action.disabledBackground,
-          },
-        },
-        textColor: theme.palette.text.secondary,
-      }}
-      xFormat={(d: string) =>
-        (Date.parse(d) && format(new Date(d), 'MM/dd p')) ?? 'null'
-      }
-      yFormat={(f: number) => toDecimal(f)}
-      animate={true}
-      enablePoints={false}
-      useMesh={true}
-      enableGridY={true}
-      enableGridX={false}
-      axisTop={null}
-      axisRight={null}
-      axisBottom={null}
-      axisLeft={{
-        //@ts-ignore
-        orient: 'left',
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: -10,
-        legend: 'USD',
-        legendOffset: -60,
-        legendPosition: 'middle',
-        format: '>-.1e',
-      }}
-      tooltip={ToolTip}
-      data={data}
-    />
+    <div>
+      <V.VictoryChart
+        width={width}
+        height={400}
+        scale={{ x: 'time', y: 'linear' }}
+        // padding={{ top: 0, left: 50, right: 50, bottom: 30 }}
+        containerComponent={
+          <V.VictoryZoomContainer
+            responsive={false}
+            zoomDimension="x"
+            zoomDomain={zoomDomain}
+            onZoomDomainChange={setZoomDomain}
+          />
+        }
+      >
+        <V.VictoryLine
+          style={{
+            data: { stroke: 'tomato' },
+          }}
+          y="y"
+          x="x"
+          data={trades.map((t: any) => ({ ...t, x: new Date(t.x) }))}
+        />
+      </V.VictoryChart>
+      <V.VictoryChart
+        width={width}
+        height={90}
+        scale={{ x: 'time' }}
+        padding={{ top: 0, left: 50, right: 50, bottom: 30 }}
+        containerComponent={
+          <V.VictoryBrushContainer
+            responsive={false}
+            brushDimension="x"
+            brushDomain={brushDomain}
+            onBrushDomainChange={setBrushDomain}
+          />
+        }
+      >
+        <V.VictoryAxis tickFormat={(x) => format(new Date(x), 'MMM dd')} />
+        <V.VictoryLine
+          style={{
+            data: { stroke: 'tomato' },
+          }}
+          data={distributedCopy(trades, 9)}
+        />
+      </V.VictoryChart>
+    </div>
   )
 }
-
+function distributedCopy(items, n) {
+  var elements = [items[0]]
+  var totalItems = items.length - 2
+  var interval = Math.floor(totalItems / (n - 2))
+  for (var i = 1; i < n - 1; i++) {
+    elements.push(items[i * interval])
+  }
+  elements.push(items[items.length - 1])
+  return elements
+}
 export default withTheme(Graph)

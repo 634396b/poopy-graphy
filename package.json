@@ -19,6 +19,7 @@
     "@material-ui/icons": "^4.11.2",
     "@nivo/core": "^0.69.0",
     "@nivo/line": "^0.69.0",
+    "cors": "^2.8.5",
     "date-fns": "^2.21.1",
     "graphql": "^15.5.0",
     "mongodb": "^3.6.6",
@@ -28,7 +29,8 @@
     "react-intersection-observer": "^8.31.1",
     "react-use": "^17.2.4",
     "recharts": "^2.0.9",
-    "ts-node": "^9.1.1"
+    "ts-node": "^9.1.1",
+    "victory": "^35.5.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
