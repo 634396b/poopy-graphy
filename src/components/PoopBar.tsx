@@ -26,7 +26,7 @@ function PoopBar({ toggleDarkMode, diarrhea }: any) {
       <AppBar position="static">
         <Toolbar>
           <IconButton
-            onClick={(_) => router.replace(`/?poop=${diarrhea}`)}
+            onClick={(_) => router.replace(`/`)}
             edge="start"
             color="inherit"
             aria-label="menu"

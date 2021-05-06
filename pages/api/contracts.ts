@@ -61,12 +61,13 @@ export async function getSymbols() {
   ).map((d) => d.symbol)
 }
 
-export async function getContracts(lastId = '', start: Date, interval = 120) {
+export async function getContracts(lastId = '', start: Date, interval = 30) {
   const minDate = start
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
   const poopygraphs = await graphs
     .aggregate([
+      { $sort: { _id: 1 } },
       {
         $addFields: {
           trades: {
@@ -79,17 +80,17 @@ export async function getContracts(lastId = '', start: Date, interval = 120) {
                     $gte: ['$$t.timeInterval.minute', minDate.toISOString()],
                   },
                   // Display trades as every x minutes, 60 = every hour
-                  {
-                    $eq: [
-                      {
-                        $mod: [
-                          { $toLong: { $toDate: '$$t.timeInterval.minute' } },
-                          1000 * 60 * interval,
-                        ],
-                      },
-                      0,
-                    ],
-                  },
+                  // {
+                  //   $eq: [
+                  //     {
+                  //       $mod: [
+                  //         { $toLong: { $toDate: '$$t.timeInterval.minute' } },
+                  //         1000 * 60 * interval,
+                  //       ],
+                  //     },
+                  //     0,
+                  //   ],
+                  // },
                 ],
               },
             },
@@ -117,7 +118,6 @@ export async function getContracts(lastId = '', start: Date, interval = 120) {
           symbol: { $first: '$trades.baseCurrency.symbol' },
         },
       },
-      { $sort: { _id: 1 } },
       { $limit: 6 },
     ])
     .toArray()

@@ -55,7 +55,7 @@ function Poop({ tookA, diarrhea, urine }: any) {
           return (
             <Grid item xs={12} md={6} lg={4} key={symbol}>
               <Grid item xs={12}>
-                <Box height={100} mt={1}>
+                <Box height={50} ml={10}>
                   <PooCoinLink contractAddress={address} symbol={symbol} />
                 </Box>
               </Grid>
@@ -68,6 +68,7 @@ function Poop({ tookA, diarrhea, urine }: any) {
           )
         })}
         <Grid
+          style={{ height: '50px' }}
           xs={12}
           item
           alignContent="space-around"
@@ -106,7 +107,7 @@ export async function getServerSideProps(context: NextPageContext) {
   const needsTo = context?.query?.needsTo as string
   const tookA = await getContracts(
     needsTo === 'poop' ? poop : pee,
-    sub(new Date(), { years: 14 })
+    sub(new Date(), { years: 1 })
   )
   const diarrhea = tookA?.[tookA?.length - 1]?._id
   return {

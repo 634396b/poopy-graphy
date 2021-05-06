@@ -22,11 +22,15 @@ function Graph({ theme, trades, symbol }: any) {
   return (
     <ResponsiveContainer>
       <LineChart {...getMargin()} data={trades}>
-        {getGrid()}
-        {getYAxis()}
-        {getXAxis()}
+        <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider} />
+        <YAxis />
+        <XAxis
+          dataKey="timeInterval.minute"
+          tickFormatter={(x: string) => format(new Date(x), 'MMM dd')}
+        />
         {getToolTip()}
         <Line
+          stroke={theme.palette.primary.light}
           dataKey="quotePrice"
           dot={false}
           isAnimationActive={false}
@@ -71,24 +75,6 @@ function getToolTip() {
   )
 }
 
-function getXAxis() {
-  return (
-    <XAxis
-      dataKey="timeInterval.minute"
-      tickFormatter={(x: string) => format(new Date(x), 'MMM dd')}
-    />
-  )
-}
-function getYAxis() {
-  return (
-    <YAxis
-    // tickFormatter={toDecimal}
-    />
-  )
-}
-function getGrid() {
-  return <CartesianGrid strokeDasharray="3 3" />
-}
 function getMargin() {
   return {
     margin: {
