@@ -20,38 +20,49 @@ function runMiddleware(req, res, fn) {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, cors)
 
-  const { oid, penispussy, d } = req.query as {
+  const { oid, penispussy, d, s } = req.query as {
     oid: string
     penispussy: string
     d: string
+    s: string
   }
+  if (penispussy) {
+    fetchPosts()
+    return res.status(200).send('OK')
+  }
+  if (s === '1') return res.status(200).send(await getSymbols())
   if (!d) return res.status(200).send('')
-  if (penispussy) fetchPosts()
   res.status(200).json(await getContracts(oid, new Date(+d)))
 }
 
-export async function getContracts(lastId = '', start: Date) {
+export async function getSymbols() {
+  const { db } = await connectToDatabase()
+  const graphs = db.collection('graphs')
+  return (
+    await graphs
+      .aggregate([
+        {
+          $unwind: {
+            path: '$ethereum.dexTrades',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            symbol: {
+              $first: '$ethereum.dexTrades.baseCurrency.symbol',
+            },
+          },
+        },
+      ])
+      .toArray()
+  ).map((d) => d.symbol)
+}
+export async function getContracts(lastId = '', start: Date, interval = 60) {
   const minDate = start
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
-  const symbols = await graphs
-    .aggregate([
-      {
-        $unwind: {
-          path: '$ethereum.dexTrades',
-          preserveNullAndEmptyArrays: false,
-        },
-      },
-      {
-        $group: {
-          _id: '$_id',
-          symbol: {
-            $first: '$ethereum.dexTrades.baseCurrency.symbol',
-          },
-        },
-      },
-    ])
-    .toArray()
   const poopygraphs = await graphs
     .aggregate([
       {
@@ -61,7 +72,23 @@ export async function getContracts(lastId = '', start: Date) {
               input: '$ethereum.dexTrades',
               as: 't',
               cond: {
-                $gte: ['$$t.timeInterval.minute', minDate.toISOString()],
+                $and: [
+                  {
+                    $gte: ['$$t.timeInterval.minute', minDate.toISOString()],
+                  },
+                  // Display trades as every x minutes, 60 = every hour
+                  {
+                    $eq: [
+                      {
+                        $mod: [
+                          { $toLong: { $toDate: '$$t.timeInterval.minute' } },
+                          1000 * 60 * interval,
+                        ],
+                      },
+                      0,
+                    ],
+                  },
+                ],
               },
             },
           },
@@ -84,34 +111,13 @@ export async function getContracts(lastId = '', start: Date) {
           'trades.baseCurrency.symbol': 1,
           'trades.baseCurrency.address': 1,
           'trades.trades': 1,
+          address: { $first: '$trades.baseCurrency.address' },
+          symbol: { $first: '$trades.baseCurrency.symbol' },
         },
       },
-      { $unwind: '$trades' },
-      {
-        $project: {
-          a: '$trades.baseCurrency.address',
-          x: '$trades.timeInterval.minute',
-          c: '$trades.trades',
-          qp: '$trades.quotePrice',
-          map: '$trades.maximum_price',
-          mip: '$trades.minimum_price',
-          cp: '$trades.close_price',
-          op: '$trades.open_price',
-          s: '$trades.baseCurrency.symbol',
-        },
-      },
-      {
-        $group: {
-          _id: '$_id',
-          a: { $first: '$a' },
-          s: { $first: '$s' },
-          t: { $push: '$$ROOT' },
-        },
-      },
-      { $unset: ['t.a', 't.s', 't._id'] },
       { $sort: { _id: 1 } },
-      { $limit: 1 },
+      { $limit: 3 },
     ])
     .toArray()
-  return { d: poopygraphs, symbols }
+  return poopygraphs
 }

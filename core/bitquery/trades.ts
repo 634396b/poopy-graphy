@@ -64,7 +64,14 @@ async function associateTrades({ addr, _id }: { addr: string[]; _id: string }) {
   const d2 = new Date()
   const differenceBetweenLast = differenceInSeconds(d2, d1)
   if (differenceBetweenLast < 10) return null
-  const data = await getTrades(addr[0], d1, d2)
+  // BUSD
+  const data = await getTrades(
+    addr[0],
+    d1,
+    d2,
+    30,
+    '0x4Fabb145d64652a948d72533023f6E7A623C7C53'
+  )
   const trades = data?.data?.ethereum?.dexTrades
   if (!trades) return null
   await graphs.updateMany(

@@ -14,7 +14,7 @@ import { getContracts } from '$/api/contracts'
 
 // Components :D
 import PooCoinLink from '$/components/PooCoinLink'
-import Graph from '$/components/Graph'
+import Graph from '$/components/Graph/Graph'
 
 // Types :D
 import type { TradingAmountQuery } from '$/bitquery/generated'
@@ -53,6 +53,8 @@ function Poop({ tookAPoop, diarrhea }: any) {
       setContracts((p: any) => [...p, ...tookAPoop])
     }
   }, [tookAPoop])
+
+  console.log(contracts)
   return (
     <Box paddingTop={1}>
       <Grid container>
@@ -68,17 +70,18 @@ function Poop({ tookAPoop, diarrhea }: any) {
             href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}`}
           />
         </Head>
-        {contracts.map(({ s, a, t, _id }: any) => {
+        {contracts.map(({ symbol, address, trades, _id }: any) => {
+          typeof window !== 'undefined' && console.log(trades)
           return (
-            <Grid item xs={12} md={6} key={s}>
+            <Grid item xs={12} md={12} lg={6} key={symbol}>
               <Grid item xs={12}>
                 <Box height={100} my={2}>
-                  <PooCoinLink contractAddress={a} symbol={s} />
+                  <PooCoinLink contractAddress={address} symbol={symbol} />
                 </Box>
               </Grid>
               <Grid item>
                 <Box height={500} pl={5} ml={5}>
-                  <Graph trades={t} symbol={s} />
+                  <Graph trades={trades} />
                 </Box>
               </Grid>
             </Grid>
@@ -93,7 +96,7 @@ function Poop({ tookAPoop, diarrhea }: any) {
 }
 export async function getServerSideProps(context: NextPageContext) {
   const poop = context?.query?.poop as string
-  const tookAPoop = await getContracts(poop, sub(new Date(), { years: 1 }))
+  const tookAPoop = await getContracts(poop, sub(new Date(), { years: 7 }))
   const diarrhea = tookAPoop?.[tookAPoop?.length - 1]?._id
   return {
     props: { tookAPoop, diarrhea },
