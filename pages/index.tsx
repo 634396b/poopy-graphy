@@ -31,7 +31,7 @@ function Poop({ tookA, diarrhea, urine }: any) {
     router.replace(
       {
         pathname: '/',
-        query: { poop: diarrhea, needsTo: type, pee: urine },
+        query: { poop: diarrhea, pee: urine, needsTo: type },
       },
       undefined,
       {
@@ -77,21 +77,21 @@ function Poop({ tookA, diarrhea, urine }: any) {
           <Grid xs={1} item>
             <Button
               style={{ padding: '1px' }}
-              onClick={(_) => handleDigest('poop')}
-              color="primary"
+              onClick={(_) => handleDigest('pee')}
+              color="secondary"
               variant="contained"
             >
-              Poop
+              {' < '} Pee
             </Button>
           </Grid>
           <Grid xs={1} item>
             <Button
               style={{ padding: '1px' }}
-              onClick={(_) => handleDigest('pee')}
-              color="secondary"
+              onClick={(_) => handleDigest('poop')}
+              color="primary"
               variant="contained"
             >
-              Pee
+              Poop {' > '}
             </Button>
           </Grid>
         </Grid>

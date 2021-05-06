@@ -118,7 +118,7 @@ export async function getContracts(lastId = '', start: Date, interval = 120) {
         },
       },
       { $sort: { _id: 1 } },
-      { $limit: 5 },
+      { $limit: 6 },
     ])
     .toArray()
   return poopygraphs
