@@ -26,7 +26,12 @@ function Graph({ theme, trades, symbol }: any) {
         {getYAxis()}
         {getXAxis()}
         {getToolTip()}
-        <Line dataKey="quotePrice" dot={false} />
+        <Line
+          dataKey="quotePrice"
+          dot={false}
+          isAnimationActive={false}
+          type="monotone"
+        />
       </LineChart>
     </ResponsiveContainer>
   )

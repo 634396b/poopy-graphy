@@ -9,7 +9,7 @@ export async function fetchPosts() {
   const graphs = db.collection('graphs')
   const contracts = []
   // go from page x to page y
-  for (let curPage = 1; curPage < 100; curPage++) {
+  for (let curPage = 1; curPage < 1000; curPage++) {
     const { posts, hasNextPage } = await scrape({
       page: curPage,
       host: 'blockfolio.canny.io',

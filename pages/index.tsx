@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import sub from 'date-fns/sub'
 import Head from 'next/head'
 import Grid from '@material-ui/core/Grid'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
+import Paper from '@material-ui/core/Paper'
 import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
-import { useInView } from 'react-intersection-observer'
 
 // Server functions :D
 import { getContracts } from '$/api/contracts'
@@ -24,17 +24,14 @@ interface ContractApiProps extends TradingAmountQuery {
   lastId: string
 }
 
-function Poop({ tookAPoop, diarrhea }: any) {
-  const { ref, inView, entry } = useInView({
-    threshold: 0,
-  })
+function Poop({ tookA, diarrhea, urine }: any) {
+  const contracts = tookA
   const router = useRouter()
-  const [contracts, setContracts] = useState<ContractApiProps[] | []>([])
-  const handleFetchNew = () => {
+  const handleDigest = (type: string) => {
     router.replace(
       {
         pathname: '/',
-        query: { poop: diarrhea },
+        query: { poop: diarrhea, needsTo: type, pee: urine },
       },
       undefined,
       {
@@ -42,22 +39,9 @@ function Poop({ tookAPoop, diarrhea }: any) {
       }
     )
   }
-  useEffect(() => {
-    if (inView && entry) {
-      handleFetchNew()
-    }
-  }, [inView, entry])
-
-  useEffect(() => {
-    if (tookAPoop && Array.isArray(tookAPoop)) {
-      setContracts((p: any) => [...p, ...tookAPoop])
-    }
-  }, [tookAPoop])
-
-  console.log(contracts)
   return (
     <Box paddingTop={1}>
-      <Grid container>
+      <Grid container alignItems="center">
         <Head>
           <title>Graphy Poopy</title>
           <meta
@@ -65,17 +49,13 @@ function Poop({ tookAPoop, diarrhea }: any) {
             content="Poop smeared everywhere, delicious"
           />
           <link rel="icon" href="/favicon.ico" />
-          <link
-            rel="prefetch"
-            href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}`}
-          />
         </Head>
         {contracts.map(({ symbol, address, trades, _id }: any) => {
           typeof window !== 'undefined' && console.log(trades)
           return (
-            <Grid item xs={12} md={12} lg={6} key={symbol}>
+            <Grid item xs={12} md={6} lg={4} key={symbol}>
               <Grid item xs={12}>
-                <Box height={100} my={2}>
+                <Box height={100} mt={1}>
                   <PooCoinLink contractAddress={address} symbol={symbol} />
                 </Box>
               </Grid>
@@ -87,19 +67,50 @@ function Poop({ tookAPoop, diarrhea }: any) {
             </Grid>
           )
         })}
-        <Grid xs={12} item ref={ref}>
-          <LinearProgress className="loading" />
+        <Grid
+          xs={12}
+          item
+          alignContent="space-around"
+          justify="center"
+          container
+        >
+          <Grid xs={1} item>
+            <Button
+              style={{ padding: '1px' }}
+              onClick={(_) => handleDigest('poop')}
+              color="primary"
+              variant="contained"
+            >
+              Poop
+            </Button>
+          </Grid>
+          <Grid xs={1} item>
+            <Button
+              style={{ padding: '1px' }}
+              onClick={(_) => handleDigest('pee')}
+              color="secondary"
+              variant="contained"
+            >
+              Pee
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
     </Box>
   )
 }
+
 export async function getServerSideProps(context: NextPageContext) {
   const poop = context?.query?.poop as string
-  const tookAPoop = await getContracts(poop, sub(new Date(), { years: 7 }))
-  const diarrhea = tookAPoop?.[tookAPoop?.length - 1]?._id
+  const pee = context?.query?.pee as string
+  const needsTo = context?.query?.needsTo as string
+  const tookA = await getContracts(
+    needsTo === 'poop' ? poop : pee,
+    sub(new Date(), { years: 14 })
+  )
+  const diarrhea = tookA?.[tookA?.length - 1]?._id
   return {
-    props: { tookAPoop, diarrhea },
+    props: { tookA, diarrhea: diarrhea ?? null, urine: poop ?? null },
   }
 }
 

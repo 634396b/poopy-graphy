@@ -1,14 +1,15 @@
 import { fetchPosts } from '$/core/bitquery/trades'
 import { connectToDatabase } from '$/core/util/mongodb'
 import type { NextApiRequest, NextApiResponse } from 'next'
+//@ts-ignore
 import Cors from 'cors'
 const cors = Cors({
   methods: ['GET', 'HEAD'],
 })
 
-function runMiddleware(req, res, fn) {
+function runMiddleware(req: any, res: any, fn: any) {
   return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
+    fn(req, res, (result: any) => {
       if (result instanceof Error) {
         return reject(result)
       }
@@ -59,7 +60,8 @@ export async function getSymbols() {
       .toArray()
   ).map((d) => d.symbol)
 }
-export async function getContracts(lastId = '', start: Date, interval = 60) {
+
+export async function getContracts(lastId = '', start: Date, interval = 120) {
   const minDate = start
   const { db } = await connectToDatabase()
   const graphs = db.collection('graphs')
@@ -116,7 +118,7 @@ export async function getContracts(lastId = '', start: Date, interval = 60) {
         },
       },
       { $sort: { _id: 1 } },
-      { $limit: 3 },
+      { $limit: 5 },
     ])
     .toArray()
   return poopygraphs
