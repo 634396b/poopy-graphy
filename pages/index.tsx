@@ -18,6 +18,7 @@ import Graph from '$/components/Graph/Graph'
 
 // Types :D
 import type { TradingAmountQuery } from '$/bitquery/generated'
+import { format } from 'date-fns'
 
 interface ContractApiProps extends TradingAmountQuery {
   _id: string
@@ -30,7 +31,10 @@ function Poop({ tookA, lastLittleBitOfPoopThatWontComeOut }: any) {
   const handleDigest = () => {
     router.push({
       pathname: '/',
-      query: { poop: lastLittleBitOfPoopThatWontComeOut },
+      query: {
+        poop: lastLittleBitOfPoopThatWontComeOut,
+        d: format(new Date(), 'Mddyyyyhh'),
+      },
     })
   }
   return (
@@ -45,7 +49,12 @@ function Poop({ tookA, lastLittleBitOfPoopThatWontComeOut }: any) {
           <link rel="icon" href="/favicon.ico" />
           <link
             rel="prefetch"
-            href={`/_next/data/${process.env.buildId}/index.json?poop=${lastLittleBitOfPoopThatWontComeOut}`}
+            href={`/_next/data/${
+              process.env.buildId
+            }/index.json?poop=${lastLittleBitOfPoopThatWontComeOut}&d=${format(
+              new Date(),
+              'Mddyyyyhh'
+            )}`}
           />
         </Head>
         {contracts.map(({ symbol, address, trades, _id }: any) => {
