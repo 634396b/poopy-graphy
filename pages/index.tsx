@@ -24,20 +24,14 @@ interface ContractApiProps extends TradingAmountQuery {
   lastId: string
 }
 
-function Poop({ tookA, diarrhea, urine }: any) {
+function Poop({ tookA, lastLittleBitOfPoopThatWontComeOut }: any) {
   const contracts = tookA
   const router = useRouter()
-  const handleDigest = (type: string) => {
-    router.replace(
-      {
-        pathname: '/',
-        query: { poop: diarrhea, pee: urine, needsTo: type },
-      },
-      undefined,
-      {
-        scroll: false,
-      }
-    )
+  const handleDigest = () => {
+    router.push({
+      pathname: '/',
+      query: { poop: lastLittleBitOfPoopThatWontComeOut },
+    })
   }
   return (
     <Box paddingTop={1}>
@@ -51,7 +45,7 @@ function Poop({ tookA, diarrhea, urine }: any) {
           <link rel="icon" href="/favicon.ico" />
           <link
             rel="prefetch"
-            href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}&pee=${urine}&needsTo=poop`}
+            href={`/_next/data/${process.env.buildId}/index.json?poop=${lastLittleBitOfPoopThatWontComeOut}`}
           />
         </Head>
         {contracts.map(({ symbol, address, trades, _id }: any) => {
@@ -80,13 +74,8 @@ function Poop({ tookA, diarrhea, urine }: any) {
           container
         >
           <Grid xs={1} item>
-            <Button
-              style={{ padding: '1px' }}
-              onClick={(_) => handleDigest('poop')}
-              color="primary"
-              variant="contained"
-            >
-              Poop {' > '}
+            <Button onClick={handleDigest} color="primary" variant="contained">
+              {'<'}💩_💩{'>'}
             </Button>
           </Grid>
         </Grid>
@@ -94,18 +83,17 @@ function Poop({ tookA, diarrhea, urine }: any) {
     </Box>
   )
 }
-
+const d = sub(new Date(), { years: 1 })
 export async function getServerSideProps(context: NextPageContext) {
   const poop = context?.query?.poop as string
-  const pee = context?.query?.pee as string
-  const needsTo = context?.query?.needsTo as string
-  const tookA = await getContracts(
-    needsTo === 'poop' ? poop : pee,
-    sub(new Date(), { years: 1 })
-  )
-  const diarrhea = tookA?.[tookA?.length - 1]?._id
+  const tookA = await getContracts(poop, d)
+  const lastLittleBitOfPoopThatWontComeOut = tookA?.[tookA?.length - 1]?._id
   return {
-    props: { tookA, diarrhea: diarrhea ?? null, urine: poop ?? null },
+    props: {
+      tookA,
+      lastLittleBitOfPoopThatWontComeOut:
+        lastLittleBitOfPoopThatWontComeOut ?? null,
+    },
   }
 }
 
