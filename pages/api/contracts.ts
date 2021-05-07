@@ -67,7 +67,14 @@ export async function getContracts(lastId = '', start: Date, interval = 30) {
   const graphs = db.collection('graphs')
   const poopygraphs = await graphs
     .aggregate([
+      {
+        $match: {
+          'ethereum.dexTrades': { $ne: null, $not: { $size: 0 } },
+          _id: { $gt: lastId },
+        },
+      },
       { $sort: { _id: 1 } },
+      { $limit: 6 },
       {
         $addFields: {
           trades: {
@@ -97,12 +104,7 @@ export async function getContracts(lastId = '', start: Date, interval = 30) {
           },
         },
       },
-      {
-        $match: {
-          trades: { $ne: null, $not: { $size: 0 } },
-          _id: { $gt: lastId },
-        },
-      },
+
       {
         $project: {
           'trades.timeInterval.minute': 1,
@@ -118,7 +120,6 @@ export async function getContracts(lastId = '', start: Date, interval = 30) {
           symbol: { $first: '$trades.baseCurrency.symbol' },
         },
       },
-      { $limit: 6 },
     ])
     .toArray()
   return poopygraphs

@@ -49,6 +49,10 @@ function Poop({ tookA, diarrhea, urine }: any) {
             content="Poop smeared everywhere, delicious"
           />
           <link rel="icon" href="/favicon.ico" />
+          <link
+            rel="prefetch"
+            href={`/_next/data/${process.env.buildId}/index.json?poop=${diarrhea}&pee=${urine}&needsTo=poop`}
+          />
         </Head>
         {contracts.map(({ symbol, address, trades, _id }: any) => {
           typeof window !== 'undefined' && console.log(trades)
@@ -75,16 +79,6 @@ function Poop({ tookA, diarrhea, urine }: any) {
           justify="center"
           container
         >
-          <Grid xs={1} item>
-            <Button
-              style={{ padding: '1px' }}
-              onClick={(_) => handleDigest('pee')}
-              color="secondary"
-              variant="contained"
-            >
-              {' < '} Pee
-            </Button>
-          </Grid>
           <Grid xs={1} item>
             <Button
               style={{ padding: '1px' }}
