@@ -1,7 +1,11 @@
 generates:
-  ./core/graphql/index.ts:
-    documents: ['core/graphql/queries.graphql', 'core/graphql/custom.graphql']
-    schema: core/graphql/bitquery.graphql
+  ./core/bitquery/generated/index.ts:
+    documents:
+      [
+        'core/bitquery/generated/queries.graphql',
+        'core/bitquery/generated/custom.graphql',
+      ]
+    schema: core/bitquery/generated/bitquery.graphql
     config:
       declarationKind: 'interface' #For duplicate types
     plugins:

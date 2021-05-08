@@ -38,3 +38,58 @@ query TradingAmount(
     }
   }
 }
+
+query PaperHands($minTradeUsd: Float, $since: ISO8601DateTime, $contract: String, $limit: Int) {
+  ethereum(network: bsc) {
+    dexTrades(
+      options: {limit: $limit, desc: "tradeAmount"}
+      date: {since: $since}
+      tradeAmountUsd: {gt: $minTradeUsd}
+      baseCurrency: {is: $contract}
+    ) {
+      transaction {
+        index
+        hash
+        txFrom {
+          address
+        }
+      }
+      block {
+        height
+      }
+      tradeIndex
+      date {
+        date(format: "%Y-%m-%dT%H:%M:%SZ")
+      }
+      buyAmount
+      buyAmountInUsd: buyAmount(in: USD)
+      buyCurrency {
+        symbol
+      }
+      sellAmount
+      sellCurrency {
+        symbol
+      }
+      sellAmountInUsd: sellAmount(in: USD)
+      tradeAmount(in: USD)
+    }
+  }
+}
+
+
+
+query WalletCurrency
+{
+  ethereum(network: bsc) {
+    address(address: {is: "0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459"}) {
+      balances {
+        currency{
+          address
+          name
+          symbol
+        }
+        value
+      }
+    }
+  }
+}

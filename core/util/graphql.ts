@@ -1,11 +1,11 @@
 import * as gql from 'graphql'
 import fs from 'fs'
 import { onlyAlphaNumeric, toPascalCase } from './strings'
-import { fetchBitQueries, fetchIntrospection } from 'core/bitquery/fetch'
+import { fetchBitQueries, fetchIntrospection } from '../bitquery/fetch'
 
-const outFolder = 'core/graphql'
-const outSchema = `${outFolder}/bitquery.graphql`
-const outQueries = `${outFolder}/queries.graphql`
+const outFolder = './core/bitquery'
+const outSchema = `${outFolder}/generated/bitquery.graphql`
+const outQueries = `${outFolder}/generated/queries.graphql`
 
 export async function run() {
   const { queries } = await fetchBitQueries()
@@ -51,4 +51,4 @@ export async function run() {
   return true
 }
 
-export default run
+run()

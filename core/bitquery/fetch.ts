@@ -1,7 +1,8 @@
-import { getHeaders } from '$/util/http'
+import { getHeaders } from '../util/http'
 import { getIntrospectionQuery, IntrospectionQuery } from 'graphql'
 import { graphqlEndpoint, graphqlQueriesEndpoint } from './constants'
 import type { IBitQuery } from './IBitQuery'
+import fetch from 'node-fetch'
 
 interface BitQueryResponse {
   msg: null | string

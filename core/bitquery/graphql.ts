@@ -4,6 +4,9 @@ import {
   TradingAmount,
   TradingAmountQueryVariables,
   TradingAmountQuery,
+  PaperHandsQueryVariables,
+  PaperHands,
+  PaperHandsQuery,
 } from './generated'
 import { DocumentNode, print } from 'graphql'
 import { getHeaders } from '$/util/http'
@@ -44,6 +47,28 @@ export async function getTrades(
       method: 'POST',
     })
   ).json() as Promise<Result>
+}
+
+export async function getPaperHands(
+  contract: string,
+  from: Date,
+  minTradeUsd: Optional<number> = 10000,
+  limit = 10000
+) {
+  const startDateISO = formatISO(from)
+  const body = fmtQuery(PaperHands, {
+    since: startDateISO,
+    contract,
+    minTradeUsd,
+    limit,
+  } as PaperHandsQueryVariables)
+  return (
+    await fetch(graphqlEndpoint, {
+      ...getHeaders(),
+      body: JSON.stringify(body),
+      method: 'POST',
+    })
+  ).json() as Promise<{ data: PaperHandsQuery }>
 }
 
 export function fmtQuery(Query: DocumentNode, variables: any) {

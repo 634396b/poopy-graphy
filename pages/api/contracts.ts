@@ -1,39 +1,10 @@
 import { fetchPosts } from '$/core/bitquery/trades'
 import { connectToDatabase } from '$/core/util/mongodb'
 import type { NextApiRequest, NextApiResponse } from 'next'
-//@ts-ignore
-import Cors from 'cors'
-const cors = Cors({
-  methods: ['GET', 'HEAD'],
-})
+import { getPaperHands } from '$/bitquery/graphql'
 
-function runMiddleware(req: any, res: any, fn: any) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) {
-        return reject(result)
-      }
-
-      return resolve(result)
-    })
-  })
-}
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  await runMiddleware(req, res, cors)
-
-  const { oid, penispussy, d, s } = req.query as {
-    oid: string
-    penispussy: string
-    d: string
-    s: string
-  }
-  if (penispussy) {
-    fetchPosts()
-    return res.status(200).send('OK')
-  }
-  if (s === '1') return res.status(200).send(await getSymbols())
-  if (!d) return res.status(200).send('')
-  res.status(200).json(await getContracts(oid, new Date(+d)))
+  res.status(200).send('')
 }
 
 export async function getSymbols() {
@@ -59,6 +30,16 @@ export async function getSymbols() {
       ])
       .toArray()
   ).map((d) => d.symbol)
+}
+
+export async function getWhales() {
+  const paperHands = await getPaperHands(
+    '0x5e90253fbae4Dab78aa351f4E6fed08A64AB5590',
+    new Date(2021, 1, 1),
+    25000,
+    100000
+  )
+  return paperHands
 }
 
 export async function getContracts(lastId = '', start: Date, interval = 30) {
