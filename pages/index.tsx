@@ -1,6 +1,5 @@
 import React from 'react'
 
-import sub from 'date-fns/sub'
 import Head from 'next/head'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
@@ -11,20 +10,22 @@ import { NextPageContext } from 'next'
 import { getWhales } from '$/api/contracts'
 
 // Types :D
-import type { TradingAmountQuery } from '$/bitquery/generated'
 import { format } from 'date-fns'
 import {
+  Box,
   makeStyles,
   Table,
+  TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
-    marginTop: '10px',
+    marginTop: '5px',
+    marginBottom: '5px',
   },
 }))
 
@@ -47,34 +48,40 @@ function WhaleTracker({ whales }: any) {
           return (
             <Grid item xs={12} key={address} className={classes.grid}>
               <Paper>
-                <Table>
-                  <TableHead>
-                    <TableCell align="center">Type</TableCell>
-                    <TableCell align="center">$</TableCell>
-                    <TableCell align="center">Date</TableCell>
-                    <TableCell align="center">Tx</TableCell>
-                  </TableHead>
-                  {whales[address].map((whale: any) => {
-                    return (
-                      <TableRow
-                        key={`${address}${whale.amount}${whale.date}${whale.type}`}
-                      >
-                        <TableCell align="center">{whale.type}</TableCell>
-                        <TableCell align="center">
-                          ${numberWithCommas(whale.amount.toFixed(2))}
-                        </TableCell>
-                        <TableCell align="center">
-                          {format(new Date(whale.date), 'MMM dd yyyy')}
-                        </TableCell>
-                        <TableCell align="center">
-                          <Link href={`https://bscscan.com/tx/${whale.hash}`}>
-                            Tx
-                          </Link>
-                        </TableCell>
+                <TableContainer component={Box}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align="center">Type</TableCell>
+                        <TableCell align="center">$</TableCell>
+                        <TableCell align="center">Date</TableCell>
+                        <TableCell align="center">Tx</TableCell>
                       </TableRow>
-                    )
-                  })}
-                </Table>
+                    </TableHead>
+                    <TableBody>
+                      {whales[address].map((whale: any) => {
+                        return (
+                          <TableRow key={`${whale.hash}`}>
+                            <TableCell align="center">{whale.type}</TableCell>
+                            <TableCell align="center">
+                              ${numberWithCommas(whale.amount.toFixed(2))}
+                            </TableCell>
+                            <TableCell align="center">
+                              {format(new Date(whale.date), 'MMM dd yyyy')}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Link
+                                href={`https://bscscan.com/tx/${whale.hash}`}
+                              >
+                                Tx
+                              </Link>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
                 <Link
                   rel="noopener"
                   target="_blank"
