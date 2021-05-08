@@ -1,10 +1,12 @@
-import { useRouter } from 'next/router'
 import AppBar from '@material-ui/core/AppBar'
 import BrightnessIcon from '@material-ui/icons/Brightness6'
+import Favorite from '@material-ui/icons/Favorite'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+import withTheme from '@material-ui/styles/withTheme'
+import useCopyToClipboard from 'react-use/lib/useCopyToClipboard'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,24 +19,24 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'left',
   },
 }))
-
-function PoopBar({ toggleDarkMode }: any) {
+const addr = '0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459'
+function PoopBar({ toggleDarkMode, theme }: any) {
   const classes = useStyles()
-  const router = useRouter()
+  const [state, copyToClipboard] = useCopyToClipboard()
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
         <IconButton
-          onClick={(_) => router.replace(`/`)}
+          onClick={(_) => copyToClipboard(addr)}
           edge="start"
           color="inherit"
           aria-label="menu"
         >
           <Typography component="span" variant="h6">
-            💩
+            <Favorite />
           </Typography>
         </IconButton>
-        <div className={classes.menuButton}></div>
+        <div className={classes.menuButton}>{addr}</div>
         <IconButton
           onClick={() => toggleDarkMode()}
           color="inherit"
@@ -47,4 +49,4 @@ function PoopBar({ toggleDarkMode }: any) {
   )
 }
 
-export default PoopBar
+export default withTheme(PoopBar)

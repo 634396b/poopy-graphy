@@ -3,24 +3,21 @@ import React from 'react'
 import Head from 'next/head'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
+import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import TableContainer from '@material-ui/core/TableContainer'
+import TableCell from '@material-ui/core/TableCell'
+import TableBody from '@material-ui/core/TableBody'
+import makeStyles from '@material-ui/styles/makeStyles'
+import Table from '@material-ui/core/Table'
+import Box from '@material-ui/core/Box'
 import { NextPageContext } from 'next'
 
-// Server functions :D
 import { getWhales } from '$/api/contracts'
 
-// Types :D
 import { format } from 'date-fns'
-import {
-  Box,
-  makeStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -29,6 +26,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
+const getUTCDate = (dateString = Date.now()) => {
+  const date = new Date(dateString)
+
+  return new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds()
+  )
+}
 function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
@@ -67,7 +76,7 @@ function WhaleTracker({ whales }: any) {
                               ${numberWithCommas(whale.amount.toFixed(2))}
                             </TableCell>
                             <TableCell align="center">
-                              {format(new Date(whale.date), 'MMM dd yyyy')}
+                              {format(getUTCDate(whale.date), 'MMM dd yyyy')}
                             </TableCell>
                             <TableCell align="center">
                               <Link
@@ -82,13 +91,15 @@ function WhaleTracker({ whales }: any) {
                     </TableBody>
                   </Table>
                 </TableContainer>
-                <Link
-                  rel="noopener"
-                  target="_blank"
-                  href={`https://bscscan.com/token/0x5e90253fbae4dab78aa351f4e6fed08a64ab5590?a=${address}`}
-                >
-                  BscScan
-                </Link>
+                <Typography>
+                  <Link
+                    rel="noopener"
+                    target="_blank"
+                    href={`https://bscscan.com/token/0x5e90253fbae4dab78aa351f4e6fed08a64ab5590?a=${address}`}
+                  >
+                    BscScan - {address}
+                  </Link>
+                </Typography>
               </Paper>
             </Grid>
           )

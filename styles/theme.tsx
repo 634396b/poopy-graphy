@@ -1,5 +1,4 @@
 import brown from '@material-ui/core/colors/brown'
-import * as colors from '@material-ui/core/colors'
 import { useMemo, useState } from 'react'
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme'
 import { useLocalStorage } from 'react-use'
