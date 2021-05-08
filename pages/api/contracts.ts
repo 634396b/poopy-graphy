@@ -33,6 +33,7 @@ export async function getSymbols() {
 }
 
 export async function getWhales() {
+  console.log('Fetching new whales', new Date())
   const paperHands = await getPaperHands(
     '0x5e90253fbae4Dab78aa351f4E6fed08A64AB5590',
     new Date(2021, 1, 1),
