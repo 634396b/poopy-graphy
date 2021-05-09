@@ -25,6 +25,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '5px',
     flexGrow: 1,
   },
+  txtBuy: {
+    //@ts-ignore
+    color: theme.palette.buy,
+  },
+  txtSell: {
+    //@ts-ignore
+    color: theme.palette.sell,
+  },
 }))
 
 const getUTCDate = (dateString = Date.now()) => {
@@ -56,9 +64,9 @@ function WhaleTracker({ whales }: any) {
       <Grid container alignItems="stretch" className={classes.grid}>
         {Object.keys(whales).map((address: any) => {
           return (
-            <Grid container item xs key={address} className={classes.grid}>
+            <Grid container item key={address} className={classes.grid}>
               <Paper className={classes.grid}>
-                <Grid item xs>
+                <Grid item xs={12}>
                   <Table>
                     <TableHead>
                       <TableRow>
@@ -72,7 +80,17 @@ function WhaleTracker({ whales }: any) {
                       {whales[address].map((whale: any) => {
                         return (
                           <TableRow key={`${whale.hash}`}>
-                            <TableCell align="center">{whale.type}</TableCell>
+                            <TableCell align="center">
+                              <Typography
+                                className={
+                                  whale.type === 'Buy'
+                                    ? classes.txtBuy
+                                    : classes.txtSell
+                                }
+                              >
+                                {whale.type}
+                              </Typography>
+                            </TableCell>
                             <TableCell align="center">
                               ${numberWithCommas(whale.amount.toFixed(2))}
                             </TableCell>
@@ -92,7 +110,7 @@ function WhaleTracker({ whales }: any) {
                     </TableBody>
                   </Table>
                 </Grid>
-                <Grid item xs container justify="center">
+                <Grid item container justify="center">
                   <Typography variant="caption">
                     <Link
                       rel="noopener"
