@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   grid: {
     marginTop: '5px',
     marginBottom: '5px',
+    flexGrow: 1,
   },
 }))
 
@@ -55,9 +56,9 @@ function WhaleTracker({ whales }: any) {
       <Grid container alignItems="stretch" className={classes.grid}>
         {Object.keys(whales).map((address: any) => {
           return (
-            <Grid item xs={12} key={address} className={classes.grid}>
-              <Paper>
-                <TableContainer component={Box}>
+            <Grid container item xs key={address} className={classes.grid}>
+              <Paper className={classes.grid}>
+                <Grid item xs>
                   <Table>
                     <TableHead>
                       <TableRow>
@@ -90,16 +91,18 @@ function WhaleTracker({ whales }: any) {
                       })}
                     </TableBody>
                   </Table>
-                </TableContainer>
-                <Typography>
-                  <Link
-                    rel="noopener"
-                    target="_blank"
-                    href={`https://bscscan.com/token/0x5e90253fbae4dab78aa351f4e6fed08a64ab5590?a=${address}`}
-                  >
-                    BscScan - {address}
-                  </Link>
-                </Typography>
+                </Grid>
+                <Grid item xs container justify="center">
+                  <Typography variant="caption">
+                    <Link
+                      rel="noopener"
+                      target="_blank"
+                      href={`https://bscscan.com/token/0x5e90253fbae4dab78aa351f4e6fed08a64ab5590?a=${address}`}
+                    >
+                      Bscscan - {address}
+                    </Link>
+                  </Typography>
+                </Grid>
               </Paper>
             </Grid>
           )

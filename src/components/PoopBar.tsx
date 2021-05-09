@@ -36,7 +36,7 @@ function PoopBar({ toggleDarkMode, theme }: any) {
             <Favorite />
           </Typography>
         </IconButton>
-        <div className={classes.menuButton}>{addr}</div>
+        <div className={classes.menuButton}></div>
         <IconButton
           onClick={() => toggleDarkMode()}
           color="inherit"
