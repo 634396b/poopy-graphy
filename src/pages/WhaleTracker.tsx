@@ -64,7 +64,9 @@ function WhaleTracker({ whales, t }: any) {
                         </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <Typography component="span">${numberWithCommas(whale.amount.toFixed(2))}</Typography>
+                        <Typography component="span">
+                          ${numberWithCommas(whale.amount.toFixed(2))}
+                        </Typography>
                       </TableCell>
                       <TableCell align="center">
                         {format(getUTCDate(whale.date), 'MMM dd yyyy')}
@@ -91,9 +93,6 @@ function WhaleTracker({ whales, t }: any) {
               </TableBody>
             </Table>
           </Grid>
-          {/* <Grid item container justify="center">
-                
-              </Grid> */}
         </Paper>
       </Grid>
       )
