@@ -3,9 +3,8 @@
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-// const { withSentryConfig } = require('@sentry/nextjs')
+const { withSentryConfig } = require('@sentry/nextjs')
 
-const buildId = 'poop-1'
 const moduleExports = {
   // Your existing module.exports
   future: {
@@ -13,13 +12,6 @@ const moduleExports = {
   },
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
-  env: {
-    buildId: process.env.NODE_ENV === 'production' ? buildId : 'development',
-  },
-  generateBuildId: async () => {
-    // You can, for example, get the latest git commit hash here
-    return buildId
-  },
 }
 
 const SentryWebpackPluginOptions = {
@@ -34,4 +26,4 @@ const SentryWebpackPluginOptions = {
 
 // Make sure adding Sentry options is the last code to run before exporting, to
 // ensure that your source maps include changes from all other Webpack plugins
-module.exports = moduleExports //withSentryConfig(moduleExports, SentryWebpackPluginOptions)
+module.exports = withSentryConfig(moduleExports, SentryWebpackPluginOptions)

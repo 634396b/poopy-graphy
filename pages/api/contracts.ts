@@ -1,4 +1,3 @@
-import { fetchPosts } from '$/core/bitquery/trades'
 import { connectToDatabase } from '$/core/util/mongodb'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getPaperHands } from '$/bitquery/graphql'
@@ -39,12 +38,7 @@ export async function getWhales(
   if (isHexLike) {
     console.log('Fetching new whales', new Date())
     const p = 25000
-    const paperHands = await getPaperHands(
-      token,
-      new Date(2021, 1, 1),
-      p,
-      10000
-    )
+    const paperHands = await getPaperHands(token, new Date(2021, 1, 1), p, 1337)
     return paperHands
   } else {
     return null

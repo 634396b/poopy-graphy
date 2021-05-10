@@ -16,3 +16,7 @@ export const isMatchingRegex: RS<boolean> = (r, s) =>
 
 export const cmpAddrs = (a: string, b: string) =>
   a.toLowerCase() === b.toLowerCase()
+
+export function numberWithCommas(x: number) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}

@@ -8,3 +8,16 @@ export function distributedCopy(items: any, n: number) {
   elements.push(items[items.length - 1])
   return elements
 }
+
+export const getUTCDate = (dateString = Date.now()) => {
+  const date = new Date(dateString)
+
+  return new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds()
+  )
+}
