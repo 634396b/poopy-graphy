@@ -39,9 +39,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   if (!dexTrades || !Array.isArray(dexTrades)) return { notFound: true }
 
-  const whales = {} as WhaleMap
-
-  dexTrades.forEach(
+  const whales = dexTrades.map(
     ({ transaction, date: _date, block, buyAmountInUsd, sellAmountInUsd }) => {
       const hash = transaction?.hash
       const address = transaction?.txFrom?.address ?? ''
@@ -49,21 +47,19 @@ export const getStaticProps: GetStaticProps = async (context) => {
       const date = _date?.date
       const height = block?.height
 
-      if (!whales[address]) whales[address] = []
-      whales[address]?.push({
+      return {
         amount: buyAmountInUsd || sellAmountInUsd,
         type: buyAmountInUsd ? 'Buy' : 'Sell',
         date: date,
         index,
         hash,
         height,
-      })
-      // sort by date descending
-      whales?.[address]?.sort(
-        (a: any, b: any) => b.index + b.height - (a.index + a.height)
-      )
+        address,
+      }
     }
   )
+  // sort by date descending
+  whales?.sort((a: any, b: any) => b.index + b.height - (a.index + a.height))
   return {
     props: {
       whales,

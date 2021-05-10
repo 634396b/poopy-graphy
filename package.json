@@ -10,8 +10,9 @@
     "lint:write": "prettier --write .",
     "lint:check": "prettier --check .",
     "types:check": "tsc",
-    "build-graphql": "ts-node ./core/util/graphql",
+    "build-graphql": "ts-node -r tsconfig-paths/register ./scripts/bitquery/run",
     "build-types": "graphql-codegen",
+    "build-bitquery": "yarn run build-graphql && yarn run build-types",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
@@ -26,7 +27,6 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-use": "^17.2.4",
-    "recharts": "^2.0.9",
     "ts-node": "^9.1.1",
     "web3": "^1.3.5"
   },
@@ -39,7 +39,6 @@
     "@graphql-codegen/typescript": "^1.22.0",
     "@graphql-codegen/typescript-document-nodes": "^1.17.11",
     "@graphql-codegen/typescript-operations": "^1.17.16",
-    "@sentry/nextjs": "^6.3.5",
     "@storybook/addon-actions": "^6.2.9",
     "@storybook/addon-essentials": "^6.2.9",
     "@storybook/addon-links": "^6.2.9",
@@ -54,6 +53,7 @@
     "husky": "^6.0.0",
     "node-fetch": "^2.6.1",
     "prettier": "^2.2.1",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^4.2.4"
   }
 }

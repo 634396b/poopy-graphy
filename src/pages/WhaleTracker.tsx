@@ -35,67 +35,68 @@ function WhaleTracker({ whales, t }: any) {
 
   return (
     <Grid container alignItems="stretch" className={classes.grid}>
-      {Object.keys(whales).map((address: any) => {
-        return (
-          <Grid container item key={address} className={classes.grid}>
-            <Paper className={classes.grid}>
-              <Grid item xs={12}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell align="center">Type</TableCell>
-                      <TableCell align="center">$</TableCell>
-                      <TableCell align="center">Date</TableCell>
-                      <TableCell align="center">Tx</TableCell>
+      <Grid container item className={classes.grid}>
+        <Paper className={classes.grid}>
+          <Grid item xs={12}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Type</TableCell>
+                  <TableCell align="center">$</TableCell>
+                  <TableCell align="center">Date</TableCell>
+                  <TableCell align="center">Tx</TableCell>
+                  <TableCell align="center">All Txs</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {whales.map((whale: any) => {
+                  return (
+                    <TableRow key={`${whale.hash}`}>
+                      <TableCell align="center">
+                        <Typography
+                          className={
+                            whale.type === 'Buy'
+                              ? classes.txtBuy
+                              : classes.txtSell
+                          }
+                        >
+                          {whale.type}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography component="span">${numberWithCommas(whale.amount.toFixed(2))}</Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        {format(getUTCDate(whale.date), 'MMM dd yyyy')}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Link href={`https://bscscan.com/tx/${whale.hash}`}>
+                          Tx
+                        </Link>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="caption">
+                          <Link
+                            rel="noopener"
+                            target="_blank"
+                            href={`https://bscscan.com/token/${t}?a=${whale.address}`}
+                          >
+                            Bscscan
+                          </Link>
+                        </Typography>
+                      </TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {whales[address].map((whale: any) => {
-                      return (
-                        <TableRow key={`${whale.hash}`}>
-                          <TableCell align="center">
-                            <Typography
-                              className={
-                                whale.type === 'Buy'
-                                  ? classes.txtBuy
-                                  : classes.txtSell
-                              }
-                            >
-                              {whale.type}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="center">
-                            ${numberWithCommas(whale.amount.toFixed(2))}
-                          </TableCell>
-                          <TableCell align="center">
-                            {format(getUTCDate(whale.date), 'MMM dd yyyy')}
-                          </TableCell>
-                          <TableCell align="center">
-                            <Link href={`https://bscscan.com/tx/${whale.hash}`}>
-                              Tx
-                            </Link>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </Grid>
-              <Grid item container justify="center">
-                <Typography variant="caption">
-                  <Link
-                    rel="noopener"
-                    target="_blank"
-                    href={`https://bscscan.com/token/${t}?a=${address}`}
-                  >
-                    Bscscan - {address}
-                  </Link>
-                </Typography>
-              </Grid>
-            </Paper>
+                  )
+                })}
+              </TableBody>
+            </Table>
           </Grid>
-        )
-      })}
+          {/* <Grid item container justify="center">
+                
+              </Grid> */}
+        </Paper>
+      </Grid>
+      )
     </Grid>
   )
 }
