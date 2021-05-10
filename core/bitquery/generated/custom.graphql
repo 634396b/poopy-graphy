@@ -56,6 +56,9 @@ query PaperHands($minTradeUsd: Float, $since: ISO8601DateTime, $contract: String
       }
       block {
         height
+        timestamp {
+          time(format: "%Y-%m-%dT%H:%M:%SZ")
+        }
       }
       tradeIndex
       date {

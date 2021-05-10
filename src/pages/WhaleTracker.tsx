@@ -69,7 +69,7 @@ function WhaleTracker({ whales, t }: any) {
                         </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        {format(getUTCDate(whale.date), 'MMM dd yyyy')}
+                        {format(new Date(whale.date), 'MMM dd yyyy p')}
                       </TableCell>
                       <TableCell align="center">
                         <Link href={`https://bscscan.com/tx/${whale.hash}`}>
@@ -100,4 +100,4 @@ function WhaleTracker({ whales, t }: any) {
   )
 }
 
-export default React.memo(WhaleTracker)
+export default WhaleTracker

@@ -40,17 +40,17 @@ export const getStaticProps: GetStaticProps = async (context) => {
   if (!dexTrades || !Array.isArray(dexTrades)) return { notFound: true }
 
   const whales = dexTrades.map(
-    ({ transaction, date: _date, block, buyAmountInUsd, sellAmountInUsd }) => {
+    ({ transaction, block, buyAmountInUsd, sellAmountInUsd }) => {
       const hash = transaction?.hash
       const address = transaction?.txFrom?.address ?? ''
       const index = transaction?.index
-      const date = _date?.date
       const height = block?.height
+      const blockTime = block?.timestamp?.time
 
       return {
         amount: buyAmountInUsd || sellAmountInUsd,
         type: buyAmountInUsd ? 'Buy' : 'Sell',
-        date: date,
+        date: blockTime,
         index,
         hash,
         height,
@@ -59,7 +59,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
   )
   // sort by date descending
-  whales?.sort((a: any, b: any) => b.index + b.height - (a.index + a.height))
+  whales?.sort(
+    (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
   return {
     props: {
       whales,

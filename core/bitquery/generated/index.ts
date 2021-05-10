@@ -15361,6 +15361,9 @@ export const PaperHands = gql`
       }
       block {
         height
+        timestamp {
+          time(format: "%Y-%m-%dT%H:%M:%SZ")
+        }
       }
       tradeIndex
       date {
@@ -15405,6 +15408,11 @@ export const DexExchanges = gql`
       tradeAmount(in: USD)
       date {
         date
+      }
+      exchange {
+        fullName
+        fullNameWithId
+        name
       }
     }
   }
@@ -23917,7 +23925,7 @@ export const TotalDailyTradeVolume = gql`
   ethereum(network: bsc) {
     dexTrades(
       baseCurrency: {is: "0xc13a1b47377a8382bd3f6f9105137c1e838758b9"}
-      date: {since: "2021-05-08T22:49:00.538Z"}
+      time: {since: "2021-05-09T05:37:33.732Z"}
     ) {
       count
       tradeAmount(in: USD)
@@ -24046,6 +24054,42 @@ export const TokenCharting = gql`
       quoteCurrency {
         name
       }
+    }
+  }
+}
+    `;
+export const PairsCreatedByTokenCreator = gql`
+    query PairsCreatedByTokenCreator {
+  ethereum(network: bsc) {
+    arguments(
+      smartContractEvent: {is: "PairCreated"}
+      txFrom: {is: "0xb5b0059aa3c2b17993d24f6e8b39bc5e57501c3a"}
+      options: {desc: "block.height"}
+    ) {
+      transaction {
+        hash
+      }
+      callDepth
+      block {
+        height
+      }
+      token0_address: any(argument: {is: "token0"}, of: argument_value)
+      token0_symbol: any(
+        argument: {is: "token0"}
+        of: argument_value
+        as: token_symbol
+      )
+      token0_name: any(argument: {is: "token0"}, of: argument_value, as: token_name)
+      token1_address: any(argument: {is: "token1"}, of: argument_value)
+      token1_symbol: any(
+        argument: {is: "token1"}
+        of: argument_value
+        as: token_symbol
+      )
+      token1_name: any(argument: {is: "token1"}, of: argument_value, as: token_name)
+      pair_address: any(argument: {is: "pair"}, of: argument_value)
+      pair_symbol: any(argument: {is: "pair"}, of: argument_value, as: token_symbol)
+      pair_name: any(argument: {is: "pair"}, of: argument_value, as: token_name)
     }
   }
 }
@@ -24346,6 +24390,10 @@ export type PaperHandsQuery = (
       )>, block?: Maybe<(
         { __typename?: 'BlockExtended' }
         & Pick<BlockExtended, 'height'>
+        & { timestamp?: Maybe<(
+          { __typename?: 'DateTime' }
+          & Pick<DateTime, 'time'>
+        )> }
       )>, date?: Maybe<(
         { __typename?: 'Date' }
         & Pick<Date, 'date'>
@@ -24395,6 +24443,9 @@ export type DexExchangesQuery = (
       & { date?: Maybe<(
         { __typename?: 'Date' }
         & Pick<Date, 'date'>
+      )>, exchange?: Maybe<(
+        { __typename?: 'EthereumDex' }
+        & Pick<EthereumDex, 'fullName' | 'fullNameWithId' | 'name'>
       )> }
     )>> }
   )> }
@@ -33167,6 +33218,28 @@ export type TokenChartingQuery = (
       )>, quoteCurrency?: Maybe<(
         { __typename?: 'Currency' }
         & Pick<Currency, 'name'>
+      )> }
+    )>> }
+  )> }
+);
+
+export type PairsCreatedByTokenCreatorQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PairsCreatedByTokenCreatorQuery = (
+  { __typename?: 'Query' }
+  & { ethereum?: Maybe<(
+    { __typename?: 'Ethereum' }
+    & { arguments?: Maybe<Array<(
+      { __typename?: 'EthereumArguments' }
+      & Pick<EthereumArguments, 'callDepth'>
+      & { token0_address: EthereumArguments['any'], token0_symbol: EthereumArguments['any'], token0_name: EthereumArguments['any'], token1_address: EthereumArguments['any'], token1_symbol: EthereumArguments['any'], token1_name: EthereumArguments['any'], pair_address: EthereumArguments['any'], pair_symbol: EthereumArguments['any'], pair_name: EthereumArguments['any'] }
+      & { transaction?: Maybe<(
+        { __typename?: 'EthereumTransactionInfo' }
+        & Pick<EthereumTransactionInfo, 'hash'>
+      )>, block?: Maybe<(
+        { __typename?: 'Block' }
+        & Pick<Block, 'height'>
       )> }
     )>> }
   )> }

@@ -6,6 +6,11 @@ query DexExchanges {
       date {
         date
       }
+      exchange {
+        fullName
+        fullNameWithId
+        name
+      }
     }
   }
 }
@@ -8145,7 +8150,7 @@ query TotalDailyTradeVolume {
   ethereum(network: bsc) {
     dexTrades(
       baseCurrency: {is: "0xc13a1b47377a8382bd3f6f9105137c1e838758b9"}
-      date: {since: "2021-05-08T22:49:00.538Z"}
+      time: {since: "2021-05-09T05:37:33.732Z"}
     ) {
       count
       tradeAmount(in: USD)
@@ -8269,6 +8274,41 @@ query TokenCharting {
       quoteCurrency {
         name
       }
+    }
+  }
+}
+
+query PairsCreatedByTokenCreator {
+  ethereum(network: bsc) {
+    arguments(
+      smartContractEvent: {is: "PairCreated"}
+      txFrom: {is: "0xb5b0059aa3c2b17993d24f6e8b39bc5e57501c3a"}
+      options: {desc: "block.height"}
+    ) {
+      transaction {
+        hash
+      }
+      callDepth
+      block {
+        height
+      }
+      token0_address: any(argument: {is: "token0"}, of: argument_value)
+      token0_symbol: any(
+        argument: {is: "token0"}
+        of: argument_value
+        as: token_symbol
+      )
+      token0_name: any(argument: {is: "token0"}, of: argument_value, as: token_name)
+      token1_address: any(argument: {is: "token1"}, of: argument_value)
+      token1_symbol: any(
+        argument: {is: "token1"}
+        of: argument_value
+        as: token_symbol
+      )
+      token1_name: any(argument: {is: "token1"}, of: argument_value, as: token_name)
+      pair_address: any(argument: {is: "pair"}, of: argument_value)
+      pair_symbol: any(argument: {is: "pair"}, of: argument_value, as: token_symbol)
+      pair_name: any(argument: {is: "pair"}, of: argument_value, as: token_name)
     }
   }
 }
