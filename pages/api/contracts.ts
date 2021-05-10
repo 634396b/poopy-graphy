@@ -76,18 +76,6 @@ export async function getContracts(lastId = '', start: Date, interval = 30) {
                   {
                     $gte: ['$$t.timeInterval.minute', minDate.toISOString()],
                   },
-                  // Display trades as every x minutes, 60 = every hour
-                  // {
-                  //   $eq: [
-                  //     {
-                  //       $mod: [
-                  //         { $toLong: { $toDate: '$$t.timeInterval.minute' } },
-                  //         1000 * 60 * interval,
-                  //       ],
-                  //     },
-                  //     0,
-                  //   ],
-                  // },
                 ],
               },
             },
