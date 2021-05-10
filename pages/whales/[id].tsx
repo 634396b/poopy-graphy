@@ -1,9 +1,9 @@
 import React from 'react'
 
 import Head from 'next/head'
-import { getWhales } from '$/api/contracts'
+import getWhales from '$/core/whales/getWhales'
 import WhaleTracker from 'src/pages/WhaleTracker'
-import type { GetStaticPaths, GetStaticProps, NextPageContext } from 'next'
+import type { GetStaticPaths, GetStaticProps } from 'next'
 
 function Whales(props: any) {
   return (
@@ -38,7 +38,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   if (!dexTrades || !Array.isArray(dexTrades)) return { notFound: true }
+
   const whales = {} as WhaleMap
+
   dexTrades.forEach(
     ({ transaction, date: _date, block, buyAmountInUsd, sellAmountInUsd }) => {
       const hash = transaction?.hash
