@@ -18,6 +18,7 @@ import { NextPageContext } from 'next'
 import { getWhales } from '$/api/contracts'
 
 import { format } from 'date-fns'
+import { PaperHandsQuery } from '$/bitquery/generated'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -51,7 +52,7 @@ function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-function WhaleTracker({ whales }: any) {
+function WhaleTracker({ whales, t }: any) {
   const classes = useStyles()
 
   return (
@@ -115,7 +116,7 @@ function WhaleTracker({ whales }: any) {
                     <Link
                       rel="noopener"
                       target="_blank"
-                      href={`https://bscscan.com/token/0x5e90253fbae4dab78aa351f4e6fed08a64ab5590?a=${address}`}
+                      href={`https://bscscan.com/token/${t}?a=${address}`}
                     >
                       Bscscan - {address}
                     </Link>
@@ -129,21 +130,25 @@ function WhaleTracker({ whales }: any) {
     </>
   )
 }
+interface WhaleMap {
+  [key: string]: [(PaperHandsQuery['ethereum'] | any)['dexTrades']] | any
+}
 export async function getServerSideProps(context: NextPageContext) {
-  const whales = (await getWhales())?.data?.ethereum?.dexTrades as any
-  const whalesMap = {} as any
-  whales?.forEach(
-    ({
-      transaction: {
-        hash,
-        txFrom: { address },
-        index,
-      },
-      date: { date },
-      block: { height },
-      buyAmountInUsd,
-      sellAmountInUsd,
-    }: any) => {
+  const t =
+    (context?.query?.t as string) ??
+    '0x5e90253fbae4dab78aa351f4e6fed08a64ab5590'
+
+  const whales = (await getWhales(t))?.data?.ethereum?.dexTrades
+  if (!whales || !Array.isArray(whales)) return { notFound: true }
+  const whalesMap = {} as WhaleMap
+  whales.forEach(
+    ({ transaction, date: _date, block, buyAmountInUsd, sellAmountInUsd }) => {
+      const hash = transaction?.hash
+      const address = transaction?.txFrom?.address ?? ''
+      const index = transaction?.index
+      const date = _date?.date
+      const height = block?.height
+
       if (!whalesMap[address]) whalesMap[address] = []
       whalesMap[address]?.push({
         amount: buyAmountInUsd || sellAmountInUsd,
@@ -154,7 +159,7 @@ export async function getServerSideProps(context: NextPageContext) {
         height,
       })
       // sort by date descending
-      whalesMap[address].sort(
+      whalesMap?.[address]?.sort(
         (a: any, b: any) => b.index + b.height - (a.index + a.height)
       )
     }
@@ -162,6 +167,7 @@ export async function getServerSideProps(context: NextPageContext) {
   return {
     props: {
       whales: whalesMap,
+      t,
     },
   }
 }

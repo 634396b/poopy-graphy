@@ -2,7 +2,7 @@ import { fetchPosts } from '$/core/bitquery/trades'
 import { connectToDatabase } from '$/core/util/mongodb'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getPaperHands } from '$/bitquery/graphql'
-
+import web3 from 'web3'
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.status(200).send('')
 }
@@ -32,15 +32,23 @@ export async function getSymbols() {
   ).map((d) => d.symbol)
 }
 
-export async function getWhales() {
-  console.log('Fetching new whales', new Date())
-  const paperHands = await getPaperHands(
-    '0x5e90253fbae4Dab78aa351f4E6fed08A64AB5590',
-    new Date(2021, 1, 1),
-    25000,
-    100000
-  )
-  return paperHands
+export async function getWhales(
+  token = '0x5e90253fbae4dab78aa351f4e6fed08a64ab5590'
+) {
+  const isHexLike = web3.utils.isHexStrict(token)
+  if (isHexLike) {
+    console.log('Fetching new whales', new Date())
+    const p = 25000
+    const paperHands = await getPaperHands(
+      token,
+      new Date(2021, 1, 1),
+      p,
+      10000
+    )
+    return paperHands
+  } else {
+    return null
+  }
 }
 
 export async function getContracts(lastId = '', start: Date, interval = 30) {
