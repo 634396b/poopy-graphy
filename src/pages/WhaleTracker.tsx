@@ -12,7 +12,6 @@ import Table from '@material-ui/core/Table'
 import format from 'date-fns/format'
 
 import { numberWithCommas } from '$/core/util/strings'
-import { getUTCDate } from '$/core/util/data'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
