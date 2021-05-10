@@ -1,4 +1,5 @@
 import formatISO from 'date-fns/formatISO'
+import { DocumentNode, print } from 'graphql'
 import fetch from 'node-fetch'
 import {
   TradingAmount,
@@ -7,14 +8,13 @@ import {
   PaperHandsQueryVariables,
   PaperHands,
   PaperHandsQuery,
-} from './generated'
-import { DocumentNode, print } from 'graphql'
-import { getHeaders } from '$/util/http'
-import { graphqlEndpoint } from '$/bitquery/constants'
+} from '$/core/bitquery/generated'
+import { graphqlEndpoint, getHeaders } from '$/core/bitquery/constants'
 interface Result {
   data: TradingAmountQuery
 }
 type Optional<T> = T | null
+
 export async function getTrades(
   address: string,
   from: Date,

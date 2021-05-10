@@ -15641,6 +15641,7 @@ export const CakeusdtCurrentPrice = gql`
         symbol
       }
       quotePrice
+      price
     }
   }
 }
@@ -15849,9 +15850,15 @@ export const TopGasBurnersInDexTrades = gql`
 export const PancakeTotalVolumeAndTrades = gql`
     query PancakeTotalVolumeAndTrades {
   ethereum(network: bsc) {
-    dexTrades(exchangeName: {is: "Pancake"}) {
-      count
-      tradeAmount(in: USD)
+    dexTrades {
+      baseCurrency {
+        address
+        decimals
+        name
+        symbol
+        tokenId
+        tokenType
+      }
     }
   }
 }
@@ -22653,11 +22660,13 @@ export const Balancev4 = gql`
     query Balancev4($network: EthereumNetwork!, $address: String!) {
   ethereum(network: $network) {
     address(address: {is: $address}) {
+      balance
       balances {
         currency {
           address
           symbol
           tokenType
+          name
         }
         value
       }
@@ -23272,6 +23281,52 @@ export const YearnEventsOverTime = gql`
   }
 }
     `;
+export const F2poolbtcflow = gql`
+    query F2poolbtcflow {
+  bitcoin {
+    inbound: coinpath(
+      initialAddress: {is: "1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY"}
+      depth: {lteq: 2}
+      options: {direction: inbound, asc: "depth", desc: "amount", limitBy: {each: "depth", limit: 10}}
+    ) {
+      sender {
+        address
+        annotation
+      }
+      receiver {
+        address
+        annotation
+      }
+      amount
+      currency {
+        symbol
+      }
+      depth
+      count
+    }
+    outbound: coinpath(
+      initialAddress: {is: "1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY"}
+      depth: {lteq: 2}
+      options: {asc: "depth", desc: "amount", limitBy: {each: "depth", limit: 10}}
+    ) {
+      sender {
+        address
+        annotation
+      }
+      receiver {
+        address
+        annotation
+      }
+      amount
+      currency {
+        symbol
+      }
+      depth
+      count
+    }
+  }
+}
+    `;
 export const DexTradingvolCombineSameSymbol = gql`
     query DexTradingvolCombineSameSymbol($symbol1: [String!]) {
   ethereum(network: bsc) {
@@ -23554,6 +23609,60 @@ export const JudeQueryv1 = gql`
   }
 }
     `;
+export const TradesForAnyWalletAddress = gql`
+    query TradesForAnyWalletAddress {
+  ethereum(network: bsc) {
+    dexTrades(
+      options: {desc: "block.height", limit: 1}
+      makerOrTaker: {is: "0xeF1F0eB4e392a45986D7cE889C95c086FB170E1e"}
+      exchangeName: {in: ["Pancake", "Pancake v2"]}
+      date: {after: "2021-04-28"}
+    ) {
+      transaction {
+        hash
+        gasValue
+        gasPrice
+        gas
+      }
+      smartContract {
+        address {
+          address
+        }
+        contractType
+        currency {
+          name
+        }
+      }
+      tradeIndex
+      date {
+        date
+      }
+      block {
+        height
+      }
+      buyAmount
+      buyAmountInUsd: buyAmount(in: USD)
+      buyCurrency {
+        symbol
+        address
+      }
+      sellAmount
+      sellAmountInUsd: sellAmount(in: USD)
+      sellCurrency {
+        symbol
+        address
+      }
+      sellAmountInUsd: sellAmount(in: USD)
+      tradeAmount(in: USD)
+      transaction {
+        gasValue
+        gasPrice
+        gas
+      }
+    }
+  }
+}
+    `;
 export const FilecoinUniqueMinersByDay = gql`
     query FilecoinUniqueMinersByDay {
   filecoin {
@@ -23607,6 +23716,38 @@ export const MidasDollarOhlc15m = gql`
       minimum_price: quotePrice(calculate: minimum)
       open_price: minimum(of: block, get: quote_price)
       close_price: maximum(of: block, get: quote_price)
+    }
+  }
+}
+    `;
+export const TradesForSpecificWallet = gql`
+    query TradesForSpecificWallet {
+  ethereum(network: bsc) {
+    dexTrades(
+      makerOrTaker: {is: "0xeF1F0eB4e392a45986D7cE889C95c086FB170E1e"}
+      date: {after: "2021-03-01"}
+    ) {
+      transaction {
+        hash
+      }
+      date: date {
+        date(format: "%d/%m/%y %H:%M")
+      }
+      block {
+        height
+      }
+      buyAmount
+      buyAmountInUsd: buyAmount(in: USD)
+      buyCurrency {
+        symbol
+        address
+      }
+      sellAmount
+      sellAmountInUsd: sellAmount(in: USD)
+      sellCurrency {
+        symbol
+        address
+      }
     }
   }
 }
@@ -23767,6 +23908,19 @@ export const PancakePairTradingvolv1 = gql`
       Txs_greater_50k: count(tradeAmountUsd: {gt: 50000})
       Txs_greater_100k: count(tradeAmountUsd: {gt: 100000})
       Txs_greater_500k: count(tradeAmountUsd: {gt: 500000})
+    }
+  }
+}
+    `;
+export const TotalDailyTradeVolume = gql`
+    query TotalDailyTradeVolume {
+  ethereum(network: bsc) {
+    dexTrades(
+      baseCurrency: {is: "0xc13a1b47377a8382bd3f6f9105137c1e838758b9"}
+      date: {since: "2021-05-08T22:49:00.538Z"}
+    ) {
+      count
+      tradeAmount(in: USD)
     }
   }
 }
@@ -24466,7 +24620,7 @@ export type CakeusdtCurrentPriceQuery = (
     { __typename?: 'Ethereum' }
     & { dexTrades?: Maybe<Array<(
       { __typename?: 'EthereumDexTrades' }
-      & Pick<EthereumDexTrades, 'quotePrice'>
+      & Pick<EthereumDexTrades, 'quotePrice' | 'price'>
       & { block?: Maybe<(
         { __typename?: 'BlockExtended' }
         & Pick<BlockExtended, 'height'>
@@ -24692,7 +24846,10 @@ export type PancakeTotalVolumeAndTradesQuery = (
     { __typename?: 'Ethereum' }
     & { dexTrades?: Maybe<Array<(
       { __typename?: 'EthereumDexTrades' }
-      & Pick<EthereumDexTrades, 'count' | 'tradeAmount'>
+      & { baseCurrency?: Maybe<(
+        { __typename?: 'Currency' }
+        & Pick<Currency, 'address' | 'decimals' | 'name' | 'symbol' | 'tokenId' | 'tokenType'>
+      )> }
     )>> }
   )> }
 );
@@ -31684,12 +31841,13 @@ export type Balancev4Query = (
     { __typename?: 'Ethereum' }
     & { address: Array<(
       { __typename?: 'EthereumAddressInfoWithBalance' }
+      & Pick<EthereumAddressInfoWithBalance, 'balance'>
       & { balances?: Maybe<Array<(
         { __typename?: 'EthereumBalance' }
         & Pick<EthereumBalance, 'value'>
         & { currency?: Maybe<(
           { __typename?: 'Currency' }
-          & Pick<Currency, 'address' | 'symbol' | 'tokenType'>
+          & Pick<Currency, 'address' | 'symbol' | 'tokenType' | 'name'>
         )> }
       )>> }
     )> }
@@ -32292,6 +32450,43 @@ export type YearnEventsOverTimeQuery = (
   )> }
 );
 
+export type F2poolbtcflowQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type F2poolbtcflowQuery = (
+  { __typename?: 'Query' }
+  & { bitcoin?: Maybe<(
+    { __typename?: 'Bitcoin' }
+    & { inbound?: Maybe<Array<(
+      { __typename?: 'BitcoinCoinpath' }
+      & Pick<BitcoinCoinpath, 'amount' | 'depth' | 'count'>
+      & { sender?: Maybe<(
+        { __typename?: 'Address' }
+        & Pick<Address, 'address' | 'annotation'>
+      )>, receiver?: Maybe<(
+        { __typename?: 'Address' }
+        & Pick<Address, 'address' | 'annotation'>
+      )>, currency?: Maybe<(
+        { __typename?: 'Currency' }
+        & Pick<Currency, 'symbol'>
+      )> }
+    )>>, outbound?: Maybe<Array<(
+      { __typename?: 'BitcoinCoinpath' }
+      & Pick<BitcoinCoinpath, 'amount' | 'depth' | 'count'>
+      & { sender?: Maybe<(
+        { __typename?: 'Address' }
+        & Pick<Address, 'address' | 'annotation'>
+      )>, receiver?: Maybe<(
+        { __typename?: 'Address' }
+        & Pick<Address, 'address' | 'annotation'>
+      )>, currency?: Maybe<(
+        { __typename?: 'Currency' }
+        & Pick<Currency, 'symbol'>
+      )> }
+    )>> }
+  )> }
+);
+
 export type DexTradingvolCombineSameSymbolQueryVariables = Exact<{
   symbol1?: Maybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
@@ -32543,6 +32738,47 @@ export type JudeQueryv1Query = (
   )> }
 );
 
+export type TradesForAnyWalletAddressQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TradesForAnyWalletAddressQuery = (
+  { __typename?: 'Query' }
+  & { ethereum?: Maybe<(
+    { __typename?: 'Ethereum' }
+    & { dexTrades?: Maybe<Array<(
+      { __typename?: 'EthereumDexTrades' }
+      & Pick<EthereumDexTrades, 'tradeIndex' | 'buyAmount' | 'sellAmount' | 'tradeAmount'>
+      & { buyAmountInUsd: EthereumDexTrades['buyAmount'], sellAmountInUsd: EthereumDexTrades['sellAmount'] }
+      & { transaction?: Maybe<(
+        { __typename?: 'EthereumTransactionInfoExtended' }
+        & Pick<EthereumTransactionInfoExtended, 'hash' | 'gasValue' | 'gasPrice' | 'gas'>
+      )>, smartContract?: Maybe<(
+        { __typename?: 'EthereumSmartContract' }
+        & Pick<EthereumSmartContract, 'contractType'>
+        & { address: (
+          { __typename?: 'Address' }
+          & Pick<Address, 'address'>
+        ), currency?: Maybe<(
+          { __typename?: 'Currency' }
+          & Pick<Currency, 'name'>
+        )> }
+      )>, date?: Maybe<(
+        { __typename?: 'Date' }
+        & Pick<Date, 'date'>
+      )>, block?: Maybe<(
+        { __typename?: 'BlockExtended' }
+        & Pick<BlockExtended, 'height'>
+      )>, buyCurrency?: Maybe<(
+        { __typename?: 'Currency' }
+        & Pick<Currency, 'symbol' | 'address'>
+      )>, sellCurrency?: Maybe<(
+        { __typename?: 'Currency' }
+        & Pick<Currency, 'symbol' | 'address'>
+      )> }
+    )>> }
+  )> }
+);
+
 export type FilecoinUniqueMinersByDayQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -32597,6 +32833,37 @@ export type MidasDollarOhlc15mQuery = (
         { __typename?: 'Currency' }
         & Pick<Currency, 'symbol' | 'address'>
       )>, quoteCurrency?: Maybe<(
+        { __typename?: 'Currency' }
+        & Pick<Currency, 'symbol' | 'address'>
+      )> }
+    )>> }
+  )> }
+);
+
+export type TradesForSpecificWalletQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TradesForSpecificWalletQuery = (
+  { __typename?: 'Query' }
+  & { ethereum?: Maybe<(
+    { __typename?: 'Ethereum' }
+    & { dexTrades?: Maybe<Array<(
+      { __typename?: 'EthereumDexTrades' }
+      & Pick<EthereumDexTrades, 'buyAmount' | 'sellAmount'>
+      & { buyAmountInUsd: EthereumDexTrades['buyAmount'], sellAmountInUsd: EthereumDexTrades['sellAmount'] }
+      & { transaction?: Maybe<(
+        { __typename?: 'EthereumTransactionInfoExtended' }
+        & Pick<EthereumTransactionInfoExtended, 'hash'>
+      )>, date?: Maybe<(
+        { __typename?: 'Date' }
+        & Pick<Date, 'date'>
+      )>, block?: Maybe<(
+        { __typename?: 'BlockExtended' }
+        & Pick<BlockExtended, 'height'>
+      )>, buyCurrency?: Maybe<(
+        { __typename?: 'Currency' }
+        & Pick<Currency, 'symbol' | 'address'>
+      )>, sellCurrency?: Maybe<(
         { __typename?: 'Currency' }
         & Pick<Currency, 'symbol' | 'address'>
       )> }
@@ -32772,6 +33039,20 @@ export type PancakePairTradingvolv1Query = (
         { __typename?: 'Currency' }
         & Pick<Currency, 'address' | 'symbol'>
       )> }
+    )>> }
+  )> }
+);
+
+export type TotalDailyTradeVolumeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TotalDailyTradeVolumeQuery = (
+  { __typename?: 'Query' }
+  & { ethereum?: Maybe<(
+    { __typename?: 'Ethereum' }
+    & { dexTrades?: Maybe<Array<(
+      { __typename?: 'EthereumDexTrades' }
+      & Pick<EthereumDexTrades, 'count' | 'tradeAmount'>
     )>> }
   )> }
 );

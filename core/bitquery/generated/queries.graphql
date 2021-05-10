@@ -230,6 +230,7 @@ query CakeusdtCurrentPrice {
         symbol
       }
       quotePrice
+      price
     }
   }
 }
@@ -427,9 +428,15 @@ query TopGasBurnersInDexTrades {
 
 query PancakeTotalVolumeAndTrades {
   ethereum(network: bsc) {
-    dexTrades(exchangeName: {is: "Pancake"}) {
-      count
-      tradeAmount(in: USD)
+    dexTrades {
+      baseCurrency {
+        address
+        decimals
+        name
+        symbol
+        tokenId
+        tokenType
+      }
     }
   }
 }
@@ -6934,11 +6941,13 @@ query PancakesPairSwapEvent {
 query Balancev4($network: EthereumNetwork!, $address: String!) {
   ethereum(network: $network) {
     address(address: {is: $address}) {
+      balance
       balances {
         currency {
           address
           symbol
           tokenType
+          name
         }
         value
       }
@@ -7526,6 +7535,51 @@ query YearnEventsOverTime($network: EthereumNetwork!) {
   }
 }
 
+query F2poolbtcflow {
+  bitcoin {
+    inbound: coinpath(
+      initialAddress: {is: "1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY"}
+      depth: {lteq: 2}
+      options: {direction: inbound, asc: "depth", desc: "amount", limitBy: {each: "depth", limit: 10}}
+    ) {
+      sender {
+        address
+        annotation
+      }
+      receiver {
+        address
+        annotation
+      }
+      amount
+      currency {
+        symbol
+      }
+      depth
+      count
+    }
+    outbound: coinpath(
+      initialAddress: {is: "1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY"}
+      depth: {lteq: 2}
+      options: {asc: "depth", desc: "amount", limitBy: {each: "depth", limit: 10}}
+    ) {
+      sender {
+        address
+        annotation
+      }
+      receiver {
+        address
+        annotation
+      }
+      amount
+      currency {
+        symbol
+      }
+      depth
+      count
+    }
+  }
+}
+
 query DexTradingvolCombineSameSymbol($symbol1: [String!]) {
   ethereum(network: bsc) {
     dexTrades(
@@ -7799,6 +7853,56 @@ query JudeQueryv1 {
   }
 }
 
+query TradesForAnyWalletAddress {
+  ethereum(network: bsc) {
+    dexTrades(
+      options: {desc: "block.height", limit: 1}
+      makerOrTaker: {is: "0xeF1F0eB4e392a45986D7cE889C95c086FB170E1e"}
+      exchangeName: {in: ["Pancake", "Pancake v2"]}
+      date: {after: "2021-04-28"}
+    ) {
+      transaction {
+        hash
+      }
+      smartContract {
+        address {
+          address
+        }
+        contractType
+        currency {
+          name
+        }
+      }
+      tradeIndex
+      date {
+        date
+      }
+      block {
+        height
+      }
+      buyAmount
+      buyAmountInUsd: buyAmount(in: USD)
+      buyCurrency {
+        symbol
+        address
+      }
+      sellAmount
+      sellAmountInUsd: sellAmount(in: USD)
+      sellCurrency {
+        symbol
+        address
+      }
+      sellAmountInUsd: sellAmount(in: USD)
+      tradeAmount(in: USD)
+      transaction {
+        gasValue
+        gasPrice
+        gas
+      }
+    }
+  }
+}
+
 query FilecoinUniqueMinersByDay {
   filecoin {
     blocks {
@@ -7849,6 +7953,37 @@ query MidasDollarOhlc15m {
       minimum_price: quotePrice(calculate: minimum)
       open_price: minimum(of: block, get: quote_price)
       close_price: maximum(of: block, get: quote_price)
+    }
+  }
+}
+
+query TradesForSpecificWallet {
+  ethereum(network: bsc) {
+    dexTrades(
+      makerOrTaker: {is: "0xeF1F0eB4e392a45986D7cE889C95c086FB170E1e"}
+      date: {after: "2021-03-01"}
+    ) {
+      transaction {
+        hash
+      }
+      date: date {
+        date(format: "%d/%m/%y %H:%M")
+      }
+      block {
+        height
+      }
+      buyAmount
+      buyAmountInUsd: buyAmount(in: USD)
+      buyCurrency {
+        symbol
+        address
+      }
+      sellAmount
+      sellAmountInUsd: sellAmount(in: USD)
+      sellCurrency {
+        symbol
+        address
+      }
     }
   }
 }
@@ -8002,6 +8137,18 @@ query PancakePairTradingvolv1 {
       Txs_greater_50k: count(tradeAmountUsd: {gt: 50000})
       Txs_greater_100k: count(tradeAmountUsd: {gt: 100000})
       Txs_greater_500k: count(tradeAmountUsd: {gt: 500000})
+    }
+  }
+}
+
+query TotalDailyTradeVolume {
+  ethereum(network: bsc) {
+    dexTrades(
+      baseCurrency: {is: "0xc13a1b47377a8382bd3f6f9105137c1e838758b9"}
+      date: {since: "2021-05-08T22:49:00.538Z"}
+    ) {
+      count
+      tradeAmount(in: USD)
     }
   }
 }

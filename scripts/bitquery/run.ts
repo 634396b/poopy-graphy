@@ -1,13 +1,13 @@
 import * as gql from 'graphql'
 import fs from 'fs'
-import { onlyAlphaNumeric, toPascalCase } from './strings'
-import { fetchBitQueries, fetchIntrospection } from '../bitquery/fetch'
+import { onlyAlphaNumeric, toPascalCase } from '$/core/util/strings'
+import { fetchBitQueries, fetchIntrospection } from './fetch'
 
 const outFolder = './core/bitquery'
 const outSchema = `${outFolder}/generated/bitquery.graphql`
 const outQueries = `${outFolder}/generated/queries.graphql`
 
-export async function run() {
+async function run() {
   const { queries } = await fetchBitQueries()
   const introspections = await fetchIntrospection()
   const schema = gql.buildClientSchema(introspections)
