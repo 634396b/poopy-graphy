@@ -27,6 +27,7 @@ function PoopBar({ toggleDarkMode, theme }: any) {
     <AppBar position="static" className={classes.root}>
       <Toolbar>
         <IconButton
+          color="inherit"
           onClick={(_) => copyToClipboard(addr)}
           edge="start"
           aria-label="love"
@@ -35,6 +36,7 @@ function PoopBar({ toggleDarkMode, theme }: any) {
         </IconButton>
         <div className={classes.menuButton}></div>
         <IconButton
+          color="inherit"
           onClick={() => toggleDarkMode()}
           aria-label="brightness"
           edge="start"
@@ -42,6 +44,7 @@ function PoopBar({ toggleDarkMode, theme }: any) {
           <BrightnessIcon />
         </IconButton>
         <IconButton
+          color="inherit"
           aria-label="github"
           href="https://github.com/634396b/poopy-graphy"
           target="_blank"
