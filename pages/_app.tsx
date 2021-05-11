@@ -3,7 +3,7 @@ import React from 'react'
 import { ThemeProvider } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import useCustomTheme from '$/styles/theme'
-import PoopBar from '$/components/PoopBar'
+import PoopBar from '$/ui/components/PoopBar'
 
 import type { AppProps } from 'next/app'
 import useRemoveSSR from 'src/hooks/useRemoveSSR'
