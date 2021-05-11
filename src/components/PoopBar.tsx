@@ -1,9 +1,10 @@
 import AppBar from '@material-ui/core/AppBar'
+import Grid from '@material-ui/core/Grid'
 import BrightnessIcon from '@material-ui/icons/Brightness6'
-import Favorite from '@material-ui/icons/Favorite'
+import FavoriteIcon from '@material-ui/icons/Favorite'
+import GitHubIcon from '@material-ui/icons/GitHub'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
-import Typography from '@material-ui/core/Typography'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import withTheme from '@material-ui/styles/withTheme'
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard'
@@ -29,20 +30,24 @@ function PoopBar({ toggleDarkMode, theme }: any) {
         <IconButton
           onClick={(_) => copyToClipboard(addr)}
           edge="start"
-          color="inherit"
-          aria-label="menu"
+          aria-label="love"
         >
-          <Typography component="span" variant="h6">
-            <Favorite />
-          </Typography>
+          <FavoriteIcon />
         </IconButton>
         <div className={classes.menuButton}></div>
         <IconButton
           onClick={() => toggleDarkMode()}
-          color="inherit"
-          aria-label="menu"
+          aria-label="brightness"
+          edge="start"
         >
           <BrightnessIcon />
+        </IconButton>
+        <IconButton
+          aria-label="github"
+          href="https://github.com/634396b/poopy-graphy"
+          target="_blank"
+        >
+          <GitHubIcon />
         </IconButton>
       </Toolbar>
     </AppBar>

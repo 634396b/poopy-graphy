@@ -4,8 +4,11 @@ import Head from 'next/head'
 import getWhales from '$/core/whales/getWhales'
 import WhaleTracker from 'src/pages/WhaleTracker'
 import type { GetStaticPaths, GetStaticProps } from 'next'
+import { useRouter } from 'next/dist/client/router'
+import { LinearProgress } from '@material-ui/core'
 
 function Whales(props: any) {
+  const router = useRouter()
   return (
     <>
       <Head>
@@ -16,7 +19,7 @@ function Whales(props: any) {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <WhaleTracker {...props} />
+      {router.isFallback ? <LinearProgress /> : <WhaleTracker {...props} />}
     </>
   )
 }
@@ -30,7 +33,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       { params: { id: '0xb0b924c4a31b7d4581a7f78f57cee1e65736be1d' } }, // happy
       { params: { id: '0x33a3d962955a3862c8093d1273344719f03ca17c' } }, // spore
     ],
-    fallback: false,
+    fallback: true,
   }
 }
 export const getStaticProps: GetStaticProps = async (context) => {
@@ -67,7 +70,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       whales,
       t,
     },
-    revalidate: 60,
+    revalidate: 30,
   }
 }
 

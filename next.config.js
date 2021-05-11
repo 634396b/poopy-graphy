@@ -1,8 +1,6 @@
 const moduleExports = {
-  future: {
-    webpack5: true,
-  },
   poweredByHeader: false,
+  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {
