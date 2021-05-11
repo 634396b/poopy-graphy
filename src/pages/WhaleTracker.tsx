@@ -94,7 +94,6 @@ function WhaleTracker({ whales, t }: any) {
           </Grid>
         </Paper>
       </Grid>
-      )
     </Grid>
   )
 }
