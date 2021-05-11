@@ -3,7 +3,6 @@ import { promises as fs } from 'fs'
 import path from 'path'
 
 import Head from 'next/head'
-import type { GetStaticProps } from 'next'
 import {
   Grid,
   List,
@@ -60,7 +59,13 @@ function Tokens(props: any) {
 }
 
 export const getServerSideProps = async () => {
-  const whalesDirectory = path.join(process.cwd(), 'whales')
+  const whalesDirectory = path.join(
+    process.cwd(),
+    '.next',
+    'server',
+    'pages',
+    'whales'
+  )
   const filenames = await fs.readdir(whalesDirectory)
 
   const tokens = filenames.map(async (filename) => {
