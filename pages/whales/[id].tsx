@@ -12,7 +12,7 @@ function Whales(props: any) {
   return (
     <>
       <Head>
-        <title>BSC Whale Tracker</title>
+        <title>{props?.symbol ?? ''} Whale Tracker </title>
         <meta
           name="description"
           content="Displays sells/buys on BSC tokens from the top wallets"
@@ -26,7 +26,13 @@ function Whales(props: any) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [],
+    paths: [
+      {
+        params: {
+          id: '0xB0B924C4a31b7d4581a7F78F57ceE1E65736Be1D',
+        },
+      },
+    ],
     fallback: true,
   }
 }
