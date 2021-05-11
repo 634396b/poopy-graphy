@@ -60,13 +60,7 @@ function Tokens(props: any) {
 }
 
 export const getServerSideProps = async () => {
-  const whalesDirectory = path.join(
-    process.cwd(),
-    '.next',
-    'server',
-    'pages',
-    'whales'
-  )
+  const whalesDirectory = path.join(process.cwd(), 'whales')
   const filenames = await fs.readdir(whalesDirectory)
 
   const tokens = filenames.map(async (filename) => {
