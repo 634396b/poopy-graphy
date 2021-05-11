@@ -12,12 +12,17 @@ import Table from '@material-ui/core/Table'
 import format from 'date-fns/format'
 
 import { numberWithCommas } from '$/core/util/strings'
+import { TableContainer } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
     marginTop: '5px',
     marginBottom: '5px',
     flexGrow: 1,
+  },
+  header: {
+    paddingTop: '5px',
+    paddingBottom: '5px',
   },
   txtBuy: {
     //@ts-ignore
@@ -29,70 +34,88 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-function WhaleTracker({ whales, t }: any) {
+function WhaleTracker({ whales, t, symbol }: any) {
   const classes = useStyles()
 
   return (
     <Grid container alignItems="stretch" className={classes.grid}>
-      <Grid container item className={classes.grid}>
-        <Paper className={classes.grid}>
-          <Grid item xs={12}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">Type</TableCell>
-                  <TableCell align="center">$</TableCell>
-                  <TableCell align="center">Date</TableCell>
-                  <TableCell align="center">Tx</TableCell>
-                  <TableCell align="center">All Txs</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {whales.map((whale: any) => {
-                  return (
-                    <TableRow key={`${whale.hash}`}>
-                      <TableCell align="center">
-                        <Typography
-                          className={
-                            whale.type === 'Buy'
-                              ? classes.txtBuy
-                              : classes.txtSell
-                          }
-                        >
-                          {whale.type}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography component="span">
-                          ${numberWithCommas(whale.amount.toFixed(2))}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        {format(new Date(whale.date), 'MMM dd yyyy p')}
-                      </TableCell>
-                      <TableCell align="center">
-                        <Link href={`https://bscscan.com/tx/${whale.hash}`}>
-                          Tx
-                        </Link>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography variant="caption">
-                          <Link
-                            rel="noopener"
-                            target="_blank"
-                            href={`https://bscscan.com/token/${t}?a=${whale.address}`}
-                          >
-                            Bscscan
-                          </Link>
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
+      <Grid item xs={12} className={classes.grid}>
+        <Paper elevation={3} className={classes.header}>
+          <Grid container item justify="center" className={classes.grid}>
+            <Typography variant="h6">
+              <Link
+                color="inherit"
+                rel="noopener"
+                target="_blank"
+                href={`https://poocoin.app/tokens/${t}`}
+              >
+                {symbol}
+              </Link>
+            </Typography>
           </Grid>
         </Paper>
+      </Grid>
+      <Grid item xs={12} className={classes.grid}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">Type</TableCell>
+                <TableCell align="center">$</TableCell>
+                <TableCell align="center">Date</TableCell>
+                <TableCell align="center">Tx</TableCell>
+                <TableCell align="center">History</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {whales.map((whale: any) => {
+                return (
+                  <TableRow key={`${whale.hash}`}>
+                    <TableCell align="center">
+                      <Typography
+                        className={
+                          whale.type === 'Buy'
+                            ? classes.txtBuy
+                            : classes.txtSell
+                        }
+                      >
+                        {whale.type}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography component="span">
+                        ${numberWithCommas(whale.amount.toFixed(2))}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      {format(new Date(whale.date), 'MMM dd yyyy p')}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Link
+                        href={`https://bscscan.com/tx/${whale.hash}`}
+                        color="inherit"
+                      >
+                        Tx
+                      </Link>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography variant="caption">
+                        <Link
+                          color="inherit"
+                          rel="noopener"
+                          target="_blank"
+                          href={`https://bscscan.com/token/${t}?a=${whale.address}`}
+                        >
+                          Bscscan
+                        </Link>
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Grid>
     </Grid>
   )

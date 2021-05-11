@@ -1,5 +1,4 @@
 import AppBar from '@material-ui/core/AppBar'
-import Grid from '@material-ui/core/Grid'
 import BrightnessIcon from '@material-ui/icons/Brightness6'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import GitHubIcon from '@material-ui/icons/GitHub'

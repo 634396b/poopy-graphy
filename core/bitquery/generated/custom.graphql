@@ -73,6 +73,9 @@ query PaperHands($minTradeUsd: Float, $since: ISO8601DateTime, $contract: String
       sellCurrency {
         symbol
       }
+      baseCurrency{
+        symbol
+      }
       sellAmountInUsd: sellAmount(in: USD)
       tradeAmount(in: USD)
     }

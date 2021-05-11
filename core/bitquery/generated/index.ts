@@ -15378,6 +15378,9 @@ export const PaperHands = gql`
       sellCurrency {
         symbol
       }
+      baseCurrency {
+        symbol
+      }
       sellAmountInUsd: sellAmount(in: USD)
       tradeAmount(in: USD)
     }
@@ -24401,6 +24404,9 @@ export type PaperHandsQuery = (
         { __typename?: 'Currency' }
         & Pick<Currency, 'symbol'>
       )>, sellCurrency?: Maybe<(
+        { __typename?: 'Currency' }
+        & Pick<Currency, 'symbol'>
+      )>, baseCurrency?: Maybe<(
         { __typename?: 'Currency' }
         & Pick<Currency, 'symbol'>
       )> }
