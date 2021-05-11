@@ -26,13 +26,7 @@ function Whales(props: any) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [
-      { params: { id: '0x5e90253fbae4dab78aa351f4e6fed08a64ab5590' } }, // bonfire
-      { params: { id: '0x2a9718deff471f3bb91fa0eceab14154f150a385' } }, // elongate
-      { params: { id: '0x8076c74c5e3f5852037f31ff0093eeb8c8add8d3' } }, // safemoon
-      { params: { id: '0xb0b924c4a31b7d4581a7f78f57cee1e65736be1d' } }, // happy
-      { params: { id: '0x33a3d962955a3862c8093d1273344719f03ca17c' } }, // spore
-    ],
+    paths: [],
     fallback: true,
   }
 }
@@ -41,6 +35,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   if (!dexTrades || !Array.isArray(dexTrades)) return { notFound: true }
+  const symbol = dexTrades[0].baseCurrency?.symbol
 
   const whales = dexTrades.map(
     ({ transaction, block, buyAmountInUsd, sellAmountInUsd }) => {
@@ -65,6 +60,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     props: {
       whales,
       t,
+      symbol,
     },
     revalidate: 30,
   }
