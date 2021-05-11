@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 const addr = '0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459'
-function PoopBar({ toggleDarkMode, theme }: any) {
+function PoopBar({ toggleDarkMode }: any) {
   const classes = useStyles()
   const [state, copyToClipboard] = useCopyToClipboard()
   return (
@@ -56,4 +56,4 @@ function PoopBar({ toggleDarkMode, theme }: any) {
   )
 }
 
-export default withTheme(PoopBar)
+export default PoopBar
