@@ -61,9 +61,9 @@ function Tokens(props: any) {
 export const getServerSideProps = async () => {
   const whalesDirectory = path.join(
     process.cwd(),
-    '.next',
-    'server',
-    'pages',
+    '_next',
+    'data',
+    'project',
     'whales'
   )
   const filenames = await fs.readdir(whalesDirectory)
