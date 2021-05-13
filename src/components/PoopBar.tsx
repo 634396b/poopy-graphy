@@ -5,51 +5,68 @@ import GitHubIcon from '@material-ui/icons/GitHub'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import makeStyles from '@material-ui/core/styles/makeStyles'
-import withTheme from '@material-ui/styles/withTheme'
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard'
+import ForwardIcon from '@material-ui/icons/Forward'
+import { useRouter } from 'next/router'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     alignItems: 'around',
   },
-  menuButton: {
+  spacing: {
     marginRight: theme.spacing(2),
     flexGrow: 1,
     textAlign: 'left',
+  },
+  iconButton: {
+    margin: '1px',
+  },
+  flippedIcon: {
+    transform: 'rotate(180deg)',
   },
 }))
 const addr = '0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459'
 function PoopBar({ toggleDarkMode }: any) {
   const classes = useStyles()
+  const router = useRouter()
   const [state, copyToClipboard] = useCopyToClipboard()
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
         <IconButton
           color="inherit"
-          onClick={(_) => copyToClipboard(addr)}
+          onClick={(_) => router.push('/')}
           edge="start"
-          aria-label="love"
+          aria-label="Home"
         >
-          <FavoriteIcon />
+          <ForwardIcon className={classes.flippedIcon} />
         </IconButton>
-        <div className={classes.menuButton}></div>
+        <div className={classes.spacing}></div>
         <IconButton
-          color="inherit"
           onClick={() => toggleDarkMode()}
-          aria-label="brightness"
+          aria-label="Brightness"
           edge="start"
+          className={classes.iconButton}
         >
           <BrightnessIcon />
         </IconButton>
         <IconButton
-          color="inherit"
-          aria-label="github"
+          aria-label="Github Source"
+          edge="start"
           href="https://github.com/634396b/poopy-graphy"
           target="_blank"
+          className={classes.iconButton}
         >
           <GitHubIcon />
+        </IconButton>
+        <IconButton
+          onClick={(_) => copyToClipboard(addr)}
+          edge="start"
+          aria-label="Love me"
+          className={classes.iconButton}
+        >
+          <FavoriteIcon />
         </IconButton>
       </Toolbar>
     </AppBar>

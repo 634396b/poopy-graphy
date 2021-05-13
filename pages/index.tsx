@@ -1,26 +1,30 @@
+import type { GetServerSideProps } from 'next'
+
 import React from 'react'
-import { promises as fs } from 'fs'
-import path from 'path'
 
 import Head from 'next/head'
-import {
-  Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  makeStyles,
-  Paper,
-} from '@material-ui/core'
-import Icon from '@material-ui/icons/Forward'
+import ForwardIcon from '@material-ui/icons/Forward'
+import Grid from '@material-ui/core/Grid'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
+import Paper from '@material-ui/core/Paper'
+import makeStyles from '@material-ui/core/styles/makeStyles'
 
+import redis from '$/core/redis'
+
+type HashSymbol = string
+interface TokenHashes {
+  [ContractHash: string]: HashSymbol
+}
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(2),
   },
 }))
 
-function Tokens(props: any) {
+function Tokens({ tokens }: { tokens: TokenHashes }) {
   const classes = useStyles()
   return (
     <>
@@ -32,20 +36,18 @@ function Tokens(props: any) {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Grid item container xs={12} className={classes.root}>
+      <Grid container className={classes.root}>
         <Grid item xs={12}>
           <Paper>
             <List component="nav">
-              {props?.tokens?.map((token: any) => {
+              {Object.keys(tokens)?.map((contractHash: any) => {
+                const symbol = tokens[contractHash]
+                const whalePage = `whales/${contractHash}`
                 return (
-                  <ListItem
-                    button
-                    component="a"
-                    href={`whales/${token?.tokenAddress}`}
-                  >
-                    <ListItemText>{token?.symbol}</ListItemText>
+                  <ListItem button component="a" href={whalePage}>
+                    <ListItemText>{symbol}</ListItemText>
                     <ListItemIcon>
-                      <Icon />
+                      <ForwardIcon />
                     </ListItemIcon>
                   </ListItem>
                 )
@@ -58,34 +60,13 @@ function Tokens(props: any) {
   )
 }
 
-export const getServerSideProps = async () => {
-  const whalesDirectory = path.join(
-    process.cwd(),
-    '.next',
-    'server',
-    'pages',
-    'whales'
-  )
-  const filenames = await fs.readdir(whalesDirectory)
-
-  const tokens = filenames.map(async (filename) => {
-    if (filename.indexOf('.html') > -1 || filename.indexOf('[id]') > -1) {
-      return null
-    } else {
-      const filePath = path.join(whalesDirectory, filename)
-      const fileContents = JSON.parse(await fs.readFile(filePath, 'utf8'))
-      const tokenAddress = filename.replace('.json', '')
-      const symbol = fileContents?.pageProps?.symbol
-      return {
-        tokenAddress,
-        symbol,
-      }
-    }
-  })
+export const getStaticProps: GetServerSideProps = async () => {
+  const tokens = await redis.hgetall('tokens')
   return {
     props: {
-      tokens: (await Promise.all(tokens)).filter((t) => t !== null),
+      tokens,
     },
+    revalidate: 5,
   }
 }
 

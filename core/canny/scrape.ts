@@ -4,8 +4,10 @@ import {
   getMatchingRegex,
   cmpAddrs,
 } from '$/core/util/strings'
-const pkswap = /pancakeswap\.finance\/#\/swap\?outputCurrency\=(0x[a-z0-9]{40})/im
-const pkswap2 = /pancakeswap\.finance\/#\/swap\?inputCurrency\=(0x[a-z0-9]{40})/im
+const pkswap =
+  /pancakeswap\.finance\/#\/swap\?outputCurrency\=(0x[a-z0-9]{40})/im
+const pkswap2 =
+  /pancakeswap\.finance\/#\/swap\?inputCurrency\=(0x[a-z0-9]{40})/im
 const contractTxt = /Contract[\n\s\-\:\=]+(0x[a-z0-9]{40})/im
 const bscScanToken = /bscscan\.com\/(token|contract)\/(0x[a-z0-9]{40})\//im
 const regexs = [pkswap, pkswap2, bscScanToken, contractTxt]

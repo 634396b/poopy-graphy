@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { ThemeProvider } from '@material-ui/core'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import { ThemeProvider } from '@material-ui/core/styles'
 import useCustomTheme from '$/styles/theme'
 import PoopBar from '$/ui/components/PoopBar'
 

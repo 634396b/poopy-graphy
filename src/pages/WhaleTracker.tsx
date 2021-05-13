@@ -10,9 +10,9 @@ import TableBody from '@material-ui/core/TableBody'
 import makeStyles from '@material-ui/styles/makeStyles'
 import Table from '@material-ui/core/Table'
 import format from 'date-fns/format'
+import TableContainer from '@material-ui/core/TableContainer'
 
 import { numberWithCommas } from '$/core/util/strings'
-import { TableContainer } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
