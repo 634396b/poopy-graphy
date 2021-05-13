@@ -2,6 +2,7 @@ import AppBar from '@material-ui/core/AppBar'
 import BrightnessIcon from '@material-ui/icons/Brightness6'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import GitHubIcon from '@material-ui/icons/GitHub'
+import HomeIcon from '@material-ui/icons/Home'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import makeStyles from '@material-ui/core/styles/makeStyles'
@@ -31,6 +32,14 @@ function PoopBar({ toggleDarkMode }: any) {
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
+        <IconButton
+          href="/"
+          aria-label="Brightness"
+          edge="start"
+          className={classes.iconButton}
+        >
+          <HomeIcon />
+        </IconButton>
         <div className={classes.spacing}></div>
         <IconButton
           onClick={() => toggleDarkMode()}

@@ -43,6 +43,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   if (!dexTrades || !Array.isArray(dexTrades)) return { notFound: true }
+  if (dexTrades.length === 0) return { notFound: true }
   const symbol = dexTrades[0].baseCurrency?.symbol as string
 
   const whales = dexTrades.map(
