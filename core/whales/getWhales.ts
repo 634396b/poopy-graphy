@@ -6,7 +6,7 @@ const getWhales = async (token = defaultToken) => {
   const isHexLike = web3.utils.isHexStrict(token)
   if (isHexLike) {
     console.log('Fetching new whales', new Date())
-    const p = 25000
+    const p = 100000
     const paperHands = await getPaperHands(token, new Date(2021, 1, 1), p, 1337)
     return paperHands
   } else {
