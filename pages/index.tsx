@@ -7,12 +7,13 @@ import ForwardIcon from '@material-ui/icons/Forward'
 import Grid from '@material-ui/core/Grid'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
 import Paper from '@material-ui/core/Paper'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 
 import redis from '$/core/redis'
+import { Typography } from '@material-ui/core'
+
+import { useRouter } from 'next/router'
 
 type HashSymbol = string
 interface TokenHashes {
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Tokens({ tokens }: { tokens: TokenHashes }) {
   const classes = useStyles()
+  const router = useRouter()
   return (
     <>
       <Head>
@@ -42,14 +44,28 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
             <List component="nav">
               {Object.keys(tokens)?.map((contractHash: any) => {
                 const symbol = tokens[contractHash]
-                const whalePage = `whales/${contractHash}`
+                const whalePage = `/whales/${contractHash}`
                 return (
-                  <ListItem button component="a" href={whalePage}>
-                    <ListItemText>{symbol}</ListItemText>
-                    <ListItemIcon>
-                      <ForwardIcon />
-                    </ListItemIcon>
-                  </ListItem>
+                  <Grid container alignItems="center">
+                    <ListItem button onClick={(_) => router.push(whalePage)}>
+                      <Grid container item xs alignItems="center">
+                        <Grid item xs={11}>
+                          <Typography component="span" variant="h6">
+                            {symbol}
+                          </Typography>{' '}
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <Typography component="span" variant="caption">
+                            {contractHash}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={1}>
+                        <ForwardIcon />
+                      </Grid>
+                    </ListItem>
+                  </Grid>
                 )
               })}
             </List>
@@ -66,7 +82,7 @@ export const getStaticProps: GetServerSideProps = async () => {
     props: {
       tokens,
     },
-    revalidate: 5,
+    revalidate: 60,
   }
 }
 

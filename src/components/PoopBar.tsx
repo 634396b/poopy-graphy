@@ -6,8 +6,6 @@ import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard'
-import ForwardIcon from '@material-ui/icons/Forward'
-import { useRouter } from 'next/router'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,19 +27,10 @@ const useStyles = makeStyles((theme) => ({
 const addr = '0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459'
 function PoopBar({ toggleDarkMode }: any) {
   const classes = useStyles()
-  const router = useRouter()
   const [state, copyToClipboard] = useCopyToClipboard()
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
-        <IconButton
-          color="inherit"
-          onClick={(_) => router.push('/')}
-          edge="start"
-          aria-label="Home"
-        >
-          <ForwardIcon className={classes.flippedIcon} />
-        </IconButton>
         <div className={classes.spacing}></div>
         <IconButton
           onClick={() => toggleDarkMode()}
