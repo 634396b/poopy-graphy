@@ -53,7 +53,7 @@ export async function getPaperHands(
   contract: string,
   from: Date,
   minTradeUsd: Optional<number> = 10000,
-  limit = 10000
+  limit = 5000
 ) {
   const startDateISO = formatISO(from)
   const body = fmtQuery(PaperHands, {
