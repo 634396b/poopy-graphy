@@ -46,7 +46,6 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
           name="description"
           content="Whale spotting from the comfort for your home"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       {isLoading && <LinearProgress />}
       <Grid container className={classes.root}>

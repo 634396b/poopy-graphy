@@ -39,10 +39,10 @@ query TradingAmount(
   }
 }
 
-query PaperHands($minTradeUsd: Float, $since: ISO8601DateTime, $contract: String, $limit: Int) {
+query Whales($minTradeUsd: Float, $since: ISO8601DateTime, $contract: String, $limit: Int) {
   ethereum(network: bsc) {
     dexTrades(
-      options: {limit: $limit, desc: "tradeAmount"}
+      options: {limit: $limit, desc: "block.timestamp.time"}
       date: {since: $since}
       tradeAmountUsd: {gt: $minTradeUsd}
       baseCurrency: {is: $contract}
@@ -61,9 +61,6 @@ query PaperHands($minTradeUsd: Float, $since: ISO8601DateTime, $contract: String
         }
       }
       tradeIndex
-      date {
-        date(format: "%Y-%m-%dT%H:%M:%SZ")
-      }
       buyAmount
       buyAmountInUsd: buyAmount(in: USD)
       buyCurrency {

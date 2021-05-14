@@ -15343,11 +15343,11 @@ export const TradingAmount = gql`
   }
 }
     `;
-export const PaperHands = gql`
-    query PaperHands($minTradeUsd: Float, $since: ISO8601DateTime, $contract: String, $limit: Int) {
+export const Whales = gql`
+    query Whales($minTradeUsd: Float, $since: ISO8601DateTime, $contract: String, $limit: Int) {
   ethereum(network: bsc) {
     dexTrades(
-      options: {limit: $limit, desc: "tradeAmount"}
+      options: {limit: $limit, desc: "block.timestamp.time"}
       date: {since: $since}
       tradeAmountUsd: {gt: $minTradeUsd}
       baseCurrency: {is: $contract}
@@ -15366,9 +15366,6 @@ export const PaperHands = gql`
         }
       }
       tradeIndex
-      date {
-        date(format: "%Y-%m-%dT%H:%M:%SZ")
-      }
       buyAmount
       buyAmountInUsd: buyAmount(in: USD)
       buyCurrency {
@@ -24367,7 +24364,7 @@ export type TradingAmountQuery = (
   )> }
 );
 
-export type PaperHandsQueryVariables = Exact<{
+export type WhalesQueryVariables = Exact<{
   minTradeUsd?: Maybe<Scalars['Float']>;
   since?: Maybe<Scalars['ISO8601DateTime']>;
   contract?: Maybe<Scalars['String']>;
@@ -24375,7 +24372,7 @@ export type PaperHandsQueryVariables = Exact<{
 }>;
 
 
-export type PaperHandsQuery = (
+export type WhalesQuery = (
   { __typename?: 'Query' }
   & { ethereum?: Maybe<(
     { __typename?: 'Ethereum' }
@@ -24397,9 +24394,6 @@ export type PaperHandsQuery = (
           { __typename?: 'DateTime' }
           & Pick<DateTime, 'time'>
         )> }
-      )>, date?: Maybe<(
-        { __typename?: 'Date' }
-        & Pick<Date, 'date'>
       )>, buyCurrency?: Maybe<(
         { __typename?: 'Currency' }
         & Pick<Currency, 'symbol'>

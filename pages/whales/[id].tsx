@@ -8,6 +8,7 @@ import WhaleTracker from 'src/pages/WhaleTracker'
 import { useRouter } from 'next/dist/client/router'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import redis from '$/core/redis'
+import web3 from 'web3'
 
 function Whales(props: any) {
   const router = useRouter()
@@ -19,7 +20,6 @@ function Whales(props: any) {
           name="description"
           content="Displays sells/buys on BSC tokens from the top wallets"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       {router.isFallback ? <LinearProgress /> : <WhaleTracker {...props} />}
     </>
@@ -33,7 +33,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 export const getStaticProps: GetStaticProps = async (context) => {
-  const t = context?.params?.id as string
+  const t = ((context?.params?.id ?? '') as string)?.toLowerCase()
+  const isHexLike = web3.utils.isHexStrict(t)
+  if (!isHexLike) return { notFound: true }
+  const isExpired = (await redis.ttl(t)) <= 0
+  if (!isExpired) {
+    return { props: JSON.parse((await redis.get(t)) ?? '{}') }
+  }
 
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   if (!dexTrades || !Array.isArray(dexTrades)) return { notFound: true }
@@ -55,18 +61,24 @@ export const getStaticProps: GetStaticProps = async (context) => {
       }
     }
   )
-  redis.hmset('tokens', t.toLowerCase(), symbol)
   // sort by date descending
   whales?.sort(
     (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
   )
+  const props = {
+    whales,
+    t,
+    symbol,
+  }
+  await redis.hmset('tokens', t, symbol)
+  await redis.setex(
+    t,
+    Math.round(Math.random() * 10 + 33),
+    JSON.stringify(props)
+  )
   return {
-    props: {
-      whales,
-      t,
-      symbol,
-    },
-    revalidate: 30,
+    props,
+    revalidate: 24,
   }
 }
 

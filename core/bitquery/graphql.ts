@@ -5,9 +5,9 @@ import {
   TradingAmount,
   TradingAmountQueryVariables,
   TradingAmountQuery,
-  PaperHandsQueryVariables,
-  PaperHands,
-  PaperHandsQuery,
+  WhalesQueryVariables,
+  Whales,
+  WhalesQuery,
 } from '$/core/bitquery/generated'
 import { graphqlEndpoint, getHeaders } from '$/core/bitquery/constants'
 interface Result {
@@ -49,26 +49,26 @@ export async function getTrades(
   ).json() as Promise<Result>
 }
 
-export async function getPaperHands(
+export async function getWhalesTrades(
   contract: string,
   from: Date,
   minTradeUsd: Optional<number> = 10000,
   limit = 5000
 ) {
   const startDateISO = formatISO(from)
-  const body = fmtQuery(PaperHands, {
+  const body = fmtQuery(Whales, {
     since: startDateISO,
     contract,
     minTradeUsd,
     limit,
-  } as PaperHandsQueryVariables)
+  } as WhalesQueryVariables)
   return (
     await fetch(graphqlEndpoint, {
       ...getHeaders(),
       body: JSON.stringify(body),
       method: 'POST',
     })
-  ).json() as Promise<{ data: PaperHandsQuery }>
+  ).json() as Promise<{ data: WhalesQuery }>
 }
 
 export function fmtQuery(Query: DocumentNode, variables: any) {

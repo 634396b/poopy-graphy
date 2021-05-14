@@ -1,3 +1,3 @@
 interface WhaleMap {
-  [key: string]: [(PaperHandsQuery['ethereum'] | any)['dexTrades']] | any
+  [key: string]: [(WhalesQuery['ethereum'] | any)['dexTrades']] | any
 }
