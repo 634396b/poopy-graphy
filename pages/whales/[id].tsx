@@ -40,7 +40,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   if (!isExpired) {
     return { props: JSON.parse((await redis.get(t)) ?? '{}') }
   }
-
+  redis.expire(t, Math.round(Math.random() * 10 + 33))
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   if (!dexTrades || !Array.isArray(dexTrades)) return { notFound: true }
   if (dexTrades.length === 0) return { notFound: true }
@@ -68,11 +68,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     symbol,
   }
   await redis.hmset('tokens', t, symbol)
-  await redis.setex(
-    t,
-    Math.round(Math.random() * 10 + 33),
-    JSON.stringify(props)
-  )
+  await redis.set(t, JSON.stringify(props))
   return {
     props,
     revalidate: 24,
