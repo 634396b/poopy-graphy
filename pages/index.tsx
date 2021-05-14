@@ -42,10 +42,10 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
   return (
     <>
       <Head>
-        <title>BSC Whale Tracker</title>
+        <title>Smart Chain, Dumb Tracker</title>
         <meta
           name="description"
-          content="Displays sells/buys on BSC tokens from the top wallets"
+          content="Whale spotting from the comfort for your home"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
