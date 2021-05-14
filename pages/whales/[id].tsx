@@ -28,13 +28,7 @@ function Whales(props: any) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [
-      {
-        params: {
-          id: '0xB0B924C4a31b7d4581a7F78F57ceE1E65736Be1D',
-        },
-      },
-    ],
+    paths: [],
     fallback: true,
   }
 }
