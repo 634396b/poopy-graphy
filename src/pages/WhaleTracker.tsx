@@ -43,6 +43,12 @@ const useStyles = makeStyles((theme) => ({
   center: {
     flexGrow: 4,
   },
+  rowBuy: {
+    backgroundColor: green[800],
+  },
+  rowSell: {
+    backgroundColor: red[800],
+  },
 }))
 
 function WhaleTracker({ whales, t, symbol }: any) {
@@ -79,23 +85,44 @@ function WhaleTracker({ whales, t, symbol }: any) {
           <Table>
             <TableBody>
               {whales.map((whale: any) => {
+                // In future use market cap to scale "big amount"
+                const isBigAmount = whale.amount > 100000
+                const isBuy = whale.type === 'Buy'
+                const isSell = whale.type === 'Sell'
+                const getClass = (
+                  classSell: string,
+                  classBuy: string,
+                  precond: boolean
+                ) => {
+                  if (!precond) {
+                    return ''
+                  } else {
+                    if (isBuy) return classBuy
+                    else if (isSell) return classSell
+                    else return ''
+                  }
+                }
+                const txAmountClass = getClass(
+                  classes.txtSell,
+                  classes.txtBuy,
+                  !isBigAmount
+                )
+                const txRowClass = getClass(
+                  classes.rowSell,
+                  classes.rowBuy,
+                  isBigAmount
+                )
                 return (
-                  <TableRow key={`${whale.hash}`}>
+                  <TableRow
+                    key={`tx-${whale.hash}${whale.type}${whale.amount}`}
+                    className={txRowClass}
+                  >
                     <TableCell align="center">
                       <Typography
                         component="span"
                         variant="body2"
-                        className={
-                          whale.type === 'Buy'
-                            ? classes.txtBuy
-                            : classes.txtSell
-                        }
+                        className={txAmountClass}
                       >
-                        {whale.type}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography component="span" variant="body2">
                         ${numberWithCommas(whale.amount.toFixed(0))}
                       </Typography>
                     </TableCell>
@@ -108,6 +135,8 @@ function WhaleTracker({ whales, t, symbol }: any) {
                       <Link
                         href={`https://bscscan.com/tx/${whale.hash}`}
                         color="inherit"
+                        rel="noopener"
+                        target="_blank"
                       >
                         Tx
                       </Link>

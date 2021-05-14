@@ -8,10 +8,11 @@ import Grid from '@material-ui/core/Grid'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import Paper from '@material-ui/core/Paper'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import Typography from '@material-ui/core/Typography'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 
 import redis from '$/core/redis'
-import { Typography } from '@material-ui/core'
 
 import { useRouter } from 'next/router'
 
@@ -28,6 +29,11 @@ const useStyles = makeStyles((theme) => ({
 function Tokens({ tokens }: { tokens: TokenHashes }) {
   const classes = useStyles()
   const router = useRouter()
+  const [isLoading, setIsLoading] = React.useState(false)
+  const handleClick = (gotoPage: string) => {
+    setIsLoading(true)
+    router.push(gotoPage)
+  }
   return (
     <>
       <Head>
@@ -38,6 +44,7 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {isLoading && <LinearProgress />}
       <Grid container className={classes.root}>
         <Grid item xs={12}>
           <Paper>
@@ -47,14 +54,13 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
                 const whalePage = `/whales/${contractHash}`
                 return (
                   <Grid container alignItems="center" key={contractHash}>
-                    <ListItem button onClick={(_) => router.push(whalePage)}>
+                    <ListItem button onClick={(_) => handleClick(whalePage)}>
                       <Grid container item xs alignItems="center">
                         <Grid item xs={11}>
                           <Typography component="span" variant="h6">
                             {symbol}
                           </Typography>{' '}
                         </Grid>
-
                         <Grid item xs={12}>
                           <Typography component="span" variant="caption">
                             {contractHash}
