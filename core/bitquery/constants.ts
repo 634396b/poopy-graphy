@@ -12,7 +12,7 @@ export function getHeaders() {
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-origin',
       'sec-gpc': '1',
-      'X-API-KEY': process.env.BITQUERY_API_KEY,
+      'X-API-KEY': process.env.BITQUERY_API_KEY as string,
     },
     referrer: 'https://graphql.bitquery.io/ide',
     referrerPolicy: 'strict-origin-when-cross-origin' as ReferrerPolicy,
