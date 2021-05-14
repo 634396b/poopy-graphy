@@ -61,7 +61,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       }
     }
   )
-  redis.hmset('tokens', t, symbol)
+  redis.hmset('tokens', t.toLowerCase(), symbol)
   // sort by date descending
   whales?.sort(
     (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
