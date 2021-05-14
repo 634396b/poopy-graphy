@@ -1,6 +1,5 @@
 import type { GetServerSideProps } from 'next'
 
-import type { MouseEvent } from 'react'
 import React from 'react'
 
 import Head from 'next/head'
@@ -59,7 +58,7 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
                 const whalePage = `/whales/${contractHash}`
                 return (
                   <Grid container alignItems="center" key={contractHash}>
-                    <NextLink href={whalePage} passHref>
+                    <NextLink href={whalePage} passHref prefetch={false}>
                       <ListItem button onClick={handleClick} component="a">
                         <Grid container item xs alignItems="center">
                           <Grid item xs={11}>
