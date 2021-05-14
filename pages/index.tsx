@@ -46,7 +46,7 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
                 const symbol = tokens[contractHash]
                 const whalePage = `/whales/${contractHash}`
                 return (
-                  <Grid container alignItems="center">
+                  <Grid container alignItems="center" key={contractHash}>
                     <ListItem button onClick={(_) => router.push(whalePage)}>
                       <Grid container item xs alignItems="center">
                         <Grid item xs={11}>
