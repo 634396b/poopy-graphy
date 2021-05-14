@@ -33,7 +33,7 @@ function PoopBar() {
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
-        <NextLink href="/" passHref>
+        <NextLink href="/" passHref prefetch={false}>
           <IconButton
             aria-label="Brightness"
             edge="start"

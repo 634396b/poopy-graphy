@@ -61,7 +61,7 @@ function WhaleTracker({ whales, t, symbol }: any) {
         <Paper elevation={3} className={classes.header}>
           <Grid container alignItems="center" alignContent="space-around">
             <Grid item xs className={classes.iconButton}>
-              <NextLink href="/" passHref>
+              <NextLink href="/" passHref prefetch={false}>
                 <IconButton color="inherit">
                   <ForwardIcon className={classes.flippedIcon} />
                 </IconButton>
