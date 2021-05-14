@@ -18,16 +18,12 @@ function useCustomTheme() {
     _setDarkMode(mode)
     _setLocalDarkMode(mode)
   }
-  const appTheme = useMemo(
-    () =>
-      createMuiTheme({
-        palette: {
-          ...palette,
-          type: isDarkMode,
-        },
-      }),
-    [isDarkMode]
-  )
+  const appTheme = createMuiTheme({
+    palette: {
+      ...palette,
+      type: isDarkMode,
+    },
+  })
   return [appTheme, toggleDarkMode] as const
 }
 export default useCustomTheme

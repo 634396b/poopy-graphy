@@ -44,10 +44,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 4,
   },
   rowBuy: {
-    backgroundColor: green[800],
+    backgroundColor: green[900],
   },
   rowSell: {
-    backgroundColor: red[800],
+    backgroundColor: red[900],
   },
 }))
 

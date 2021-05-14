@@ -14,7 +14,7 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <PoopBar toggleDarkMode={toggleDarkMode} {...pageProps} />
+      <PoopBar {...pageProps} />
       <Component {...pageProps} />
     </ThemeProvider>
   )
