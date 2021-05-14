@@ -3810,6 +3810,9 @@ enum EntityTypeEnum {
 
   """token"""
   token
+
+  """schedule"""
+  schedule
 }
 
 """Select by entity type"""

@@ -1,4 +1,4 @@
-import { getWhalesTrades } from '$/bitquery/graphql'
+import { getWhalesTrades } from '$/core/bitquery/graphql'
 import web3 from 'web3'
 
 const getWhales = async (token = '') => {

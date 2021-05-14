@@ -5,12 +5,9 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "$/canny/*": ["core/canny/*"],
-      "$/bitquery/*": ["core/bitquery/*"],
       "$/ui/*": ["src/*"],
       "$/core/*": ["core/*"],
-      "$/styles/*": ["styles/*"],
-      "$/api/*": ["pages/api/*"]
+      "$/styles/*": ["styles/*"]
     },
     "allowJs": true,
     "noEmit": true,

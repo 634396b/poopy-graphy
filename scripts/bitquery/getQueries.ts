@@ -1,17 +1,12 @@
 import * as gql from 'graphql'
-import fs from 'fs'
 import { onlyAlphaNumeric, toPascalCase } from '$/core/util/strings'
-import { fetchBitQueries, fetchIntrospection } from './fetch'
 
-const outFolder = './core/bitquery'
-const outSchema = `${outFolder}/generated/bitquery.graphql`
-const outQueries = `${outFolder}/generated/queries.graphql`
+import fetchQueries from './fetchQueries'
+import getSchema from './getSchema'
 
-async function run() {
-  const { queries } = await fetchBitQueries()
-  const introspections = await fetchIntrospection()
-  const schema = gql.buildClientSchema(introspections)
-  await fs.promises.writeFile(outSchema, gql.printSchema(schema))
+const getQueries = async () => {
+  const queries = await fetchQueries()
+  const schema = await getSchema()
 
   const gqlQueries: any[] = []
   const names = {} as { [key: string]: 1 }
@@ -47,8 +42,7 @@ async function run() {
     }
   }
   const allQueries = gqlQueries.join('\n')
-  await fs.promises.writeFile(outQueries, allQueries)
-  return true
+  return allQueries
 }
 
-run()
+export default getQueries

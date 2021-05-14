@@ -5,7 +5,7 @@ import React from 'react'
 import Head from 'next/head'
 import getWhales from '$/core/whales/getWhales'
 import WhaleTracker from 'src/pages/WhaleTracker'
-import { useRouter } from 'next/dist/client/router'
+import { useRouter } from 'next/router'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import redis from '$/core/redis'
 import web3 from 'web3'
@@ -61,10 +61,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       }
     }
   )
-  // sort by date descending
-  whales?.sort(
-    (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  )
+
   const props = {
     whales,
     t,
