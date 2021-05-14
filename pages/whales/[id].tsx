@@ -42,8 +42,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
   redis.expire(t, Math.round(Math.random() * 10 + 33))
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
-  if (!dexTrades || !Array.isArray(dexTrades)) return { notFound: true }
-  if (dexTrades.length === 0) return { notFound: true }
+  if (!dexTrades || !Array.isArray(dexTrades))
+    return { notFound: true, revalidate: 24 }
+  if (dexTrades.length === 0) return { notFound: true, revalidate: 24 }
   const symbol = dexTrades[0].baseCurrency?.symbol as string
 
   const whales = dexTrades.map(
