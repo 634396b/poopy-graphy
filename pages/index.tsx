@@ -44,7 +44,7 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
         <title>Smart Chain, Dumb Tracker</title>
         <meta
           name="description"
-          content="Whale spotting from the comfort for your home"
+          content="Whale spotting from the comfort of your home"
         />
       </Head>
       {isLoading && <LinearProgress />}

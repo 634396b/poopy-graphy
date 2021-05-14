@@ -15,10 +15,10 @@ function Whales(props: any) {
   return (
     <>
       <Head>
-        <title>{props?.symbol ?? ''} Whale Tracker </title>
+        <title>{props?.symbol ?? ''} Whales</title>
         <meta
           name="description"
-          content="Displays sells/buys on BSC tokens from the top wallets"
+          content="Displays trades on Binance Smart Chain from the top wallets"
         />
       </Head>
       {router.isFallback ? <LinearProgress /> : <WhaleTracker {...props} />}
