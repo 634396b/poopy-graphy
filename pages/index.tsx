@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from 'next'
 
+import type { MouseEvent } from 'react'
 import React from 'react'
 
 import Head from 'next/head'
@@ -31,8 +32,12 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
   const classes = useStyles()
   const router = useRouter()
   const [isLoading, setIsLoading] = React.useState(false)
-  const handleClick = () => {
-    setIsLoading(true)
+  const handleClick = (e: any) => {
+    // Do not set loading state if user opens a new tab.
+    // Middle mouse key does not trigger handleClick()
+    if (!e?.ctrlKey) {
+      setIsLoading(true)
+    }
   }
   return (
     <>
@@ -55,7 +60,7 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
                 return (
                   <Grid container alignItems="center" key={contractHash}>
                     <NextLink href={whalePage} passHref>
-                      <ListItem button onClick={handleClick}>
+                      <ListItem button onClick={handleClick} component="a">
                         <Grid container item xs alignItems="center">
                           <Grid item xs={11}>
                             <Typography component="span" variant="h6">

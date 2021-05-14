@@ -13,7 +13,8 @@ import TableContainer from '@material-ui/core/TableContainer'
 import ForwardIcon from '@material-ui/icons/Forward'
 
 import { numberWithCommas } from '$/core/util/strings'
-import { IconButton } from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton'
+import NextLink from 'next/link'
 
 import green from '@material-ui/core/colors/green'
 import red from '@material-ui/core/colors/red'
@@ -60,9 +61,11 @@ function WhaleTracker({ whales, t, symbol }: any) {
         <Paper elevation={3} className={classes.header}>
           <Grid container alignItems="center" alignContent="space-around">
             <Grid item xs className={classes.iconButton}>
-              <IconButton href="/" color="inherit">
-                <ForwardIcon className={classes.flippedIcon} />
-              </IconButton>
+              <NextLink href="/" passHref>
+                <IconButton color="inherit">
+                  <ForwardIcon className={classes.flippedIcon} />
+                </IconButton>
+              </NextLink>
             </Grid>
             <Grid item xs className={classes.center}>
               <Typography variant="h6" align="center">
