@@ -57,28 +57,17 @@ export const getStaticProps: GetStaticProps = async (context) => {
   if (dexTrades.length === 0) return notFoundRevalidate
   const symbol = dexTrades[0].baseCurrency?.symbol as string
   let volume = 0
-  const buy = { high: 0, low: Infinity }
-  const sell = { high: 0, low: Infinity }
+  const buy = { high: 0 }
+  const sell = { high: 0 }
   // Transform data
   const whales = dexTrades.map(
     ({ transaction, block, buyAmountInUsd, sellAmountInUsd }) => {
       const hash = transaction?.hash
       const address = transaction?.txFrom?.address ?? ''
       const blockTime = block?.timestamp?.time
+      
       buy.high = Math.max(buyAmountInUsd ?? buy.high, buy.high)
-      buy.low = Math.min(
-        buyAmountInUsd ?? buy.low > 0 ? buyAmountInUsd ?? buy.low : buy.low,
-        buy.low
-      )
-
       sell.high = Math.max(sellAmountInUsd ?? sell.high, sell.high)
-      sell.low = Math.min(
-        sellAmountInUsd ?? sell.low > 0
-          ? sellAmountInUsd ?? sell.low
-          : sell.low,
-
-        sell.low
-      )
 
       volume += buyAmountInUsd || sellAmountInUsd || 0
       return {
