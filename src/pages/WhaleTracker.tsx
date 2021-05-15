@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-function WhaleTracker({ whales, t, symbol }: any) {
+function WhaleTracker({ whales, t, symbol, volume, buy, sell }: any) {
   const classes = useStyles()
 
   return (
@@ -62,27 +62,44 @@ function WhaleTracker({ whales, t, symbol }: any) {
       <Grid item xs={12} className={classes.grid}>
         <Grow in={true}>
           <Paper elevation={3} className={classes.header}>
-            <Grid container alignItems="center" alignContent="space-around">
-              <Grid item xs className={classes.iconButton}>
-                <NextLink href="/" passHref prefetch={false}>
-                  <IconButton color="inherit">
-                    <ForwardIcon className={classes.flippedIcon} />
-                  </IconButton>
-                </NextLink>
+            <Grid container direction="column">
+              <Grid container item xs={12} alignItems="center">
+                <Grid item xs></Grid>
+                <Grid item xs className={classes.center}>
+                  <Typography variant="h6" align="center">
+                    <Link
+                      color="inherit"
+                      rel="noopener"
+                      target="_blank"
+                      href={`https://poocoin.app/tokens/${t}`}
+                    >
+                      {symbol}
+                    </Link>
+                  </Typography>
+                </Grid>
+                <Grid item xs></Grid>
               </Grid>
-              <Grid item xs className={classes.center}>
-                <Typography variant="h6" align="center">
-                  <Link
-                    color="inherit"
-                    rel="noopener"
-                    target="_blank"
-                    href={`https://poocoin.app/tokens/${t}`}
-                  >
-                    {symbol}
-                  </Link>
-                </Typography>
+              <Grid container item xs={12}>
+                <Grid item xs={4}>
+                  <Typography align="center">Sell High</Typography>
+                  <Typography align="center">
+                    ${numberWithCommas(sell?.high?.toFixed(0) ?? 0)}
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography align="center">Buy High</Typography>
+                  <Typography align="center">
+                    ${numberWithCommas(buy?.high?.toFixed(0) ?? 0)}
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography align="center">Volume</Typography>
+
+                  <Typography align="center">
+                    ${numberWithCommas(volume?.toFixed(0) ?? 0)}
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item xs></Grid>
             </Grid>
           </Paper>
         </Grow>

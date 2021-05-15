@@ -23,7 +23,8 @@ interface TokenHashes {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
 }))
 
@@ -40,7 +41,7 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
       </Head>
       <Grid container className={classes.root}>
         <Grid item xs={12}>
-          <Paper>
+          <Paper elevation={3}>
             <List component="nav">
               {Object.keys(tokens)?.map((contractHash: any) => {
                 const symbol = tokens[contractHash]

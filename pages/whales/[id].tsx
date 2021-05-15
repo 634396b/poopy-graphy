@@ -50,19 +50,37 @@ export const getStaticProps: GetStaticProps = async (context) => {
   // Re-set expiration now in case of error
   redis.setex(`ttl:${t}`, Math.round(Math.random() * 10 + 33), '')
   // Retrieve trades
+  const cachedVolume = await redis.hget('volume', t)
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   // Return not found for any errors and allow revalidation
   if (!dexTrades || !Array.isArray(dexTrades)) return notFoundRevalidate
   if (dexTrades.length === 0) return notFoundRevalidate
   const symbol = dexTrades[0].baseCurrency?.symbol as string
-
+  let volume = 0
+  const buy = { high: 0, low: Infinity }
+  const sell = { high: 0, low: Infinity }
   // Transform data
   const whales = dexTrades.map(
     ({ transaction, block, buyAmountInUsd, sellAmountInUsd }) => {
       const hash = transaction?.hash
       const address = transaction?.txFrom?.address ?? ''
       const blockTime = block?.timestamp?.time
+      buy.high = Math.max(buyAmountInUsd ?? buy.high, buy.high)
+      buy.low = Math.min(
+        buyAmountInUsd ?? buy.low > 0 ? buyAmountInUsd ?? buy.low : buy.low,
+        buy.low
+      )
 
+      sell.high = Math.max(sellAmountInUsd ?? sell.high, sell.high)
+      sell.low = Math.min(
+        sellAmountInUsd ?? sell.low > 0
+          ? sellAmountInUsd ?? sell.low
+          : sell.low,
+
+        sell.low
+      )
+
+      volume += buyAmountInUsd || sellAmountInUsd || 0
       return {
         amount: buyAmountInUsd || sellAmountInUsd,
         type: buyAmountInUsd ? 'Buy' : 'Sell',
@@ -74,14 +92,18 @@ export const getStaticProps: GetStaticProps = async (context) => {
   )
 
   const props = {
+    buy,
+    sell,
     whales,
     t,
     symbol,
+    volume,
   }
 
   // Cache result & symbol
-  await redis.hmset('tokens', t, symbol)
-  await redis.set(t, JSON.stringify(props))
+  redis.hmset('tokens', t, symbol)
+  redis.hmset('volume', t, volume)
+  redis.set(t, JSON.stringify(props))
   return {
     props,
     revalidate: 30,
