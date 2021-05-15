@@ -65,7 +65,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       const hash = transaction?.hash
       const address = transaction?.txFrom?.address ?? ''
       const blockTime = block?.timestamp?.time
-      
+
       buy.high = Math.max(buyAmountInUsd ?? buy.high, buy.high)
       sell.high = Math.max(sellAmountInUsd ?? sell.high, sell.high)
 
