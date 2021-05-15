@@ -19,26 +19,24 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Grow in={true}>
-        <Grid
-          container
-          direction="column"
-          justify="space-between"
-          alignItems="stretch"
-          wrap="nowrap"
-          style={{ minHeight: '100%' }}
-        >
-          <Grid item xs={12}>
-            <PoopBar {...pageProps} />
-          </Grid>
-          <Grid item xs={12}>
-            <Component {...pageProps} />
-          </Grid>
-          <Grid item xs={12}>
-            <Footer {...pageProps} />
-          </Grid>
+      <Grid
+        container
+        direction="column"
+        justify="space-between"
+        alignItems="stretch"
+        wrap="nowrap"
+        style={{ minHeight: '100%' }}
+      >
+        <Grid item xs={12}>
+          <PoopBar {...pageProps} />
         </Grid>
-      </Grow>
+        <Grid item xs={12}>
+          <Component {...pageProps} />
+        </Grid>
+        <Grid item xs={12}>
+          <Footer {...pageProps} />
+        </Grid>
+      </Grid>
     </ThemeProvider>
   )
 }

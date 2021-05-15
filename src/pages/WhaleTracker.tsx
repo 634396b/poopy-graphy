@@ -18,7 +18,8 @@ import NextLink from 'next/link'
 
 import green from '@material-ui/core/colors/green'
 import red from '@material-ui/core/colors/red'
-import Zoom from '@material-ui/core/Zoom'
+import Grow from '@material-ui/core/Grow'
+import Fade from '@material-ui/core/Fade'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -57,9 +58,9 @@ function WhaleTracker({ whales, t, symbol }: any) {
   const classes = useStyles()
 
   return (
-    <Zoom in={true}>
-      <Grid container className={classes.grid}>
-        <Grid item xs={12} className={classes.grid}>
+    <Grid container className={classes.grid}>
+      <Grid item xs={12} className={classes.grid}>
+        <Grow in={true}>
           <Paper elevation={3} className={classes.header}>
             <Grid container alignItems="center" alignContent="space-around">
               <Grid item xs className={classes.iconButton}>
@@ -84,8 +85,10 @@ function WhaleTracker({ whales, t, symbol }: any) {
               <Grid item xs></Grid>
             </Grid>
           </Paper>
-        </Grid>
-        <Grid item xs={12} className={classes.grid}>
+        </Grow>
+      </Grid>
+      <Grid item xs={12} className={classes.grid}>
+        <Fade in={true}>
           <TableContainer component={Paper}>
             <Table>
               <TableBody>
@@ -164,9 +167,9 @@ function WhaleTracker({ whales, t, symbol }: any) {
               </TableBody>
             </Table>
           </TableContainer>
-        </Grid>
+        </Fade>
       </Grid>
-    </Zoom>
+    </Grid>
   )
 }
 
