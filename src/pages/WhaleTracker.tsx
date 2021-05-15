@@ -18,6 +18,7 @@ import NextLink from 'next/link'
 
 import green from '@material-ui/core/colors/green'
 import red from '@material-ui/core/colors/red'
+import Zoom from '@material-ui/core/Zoom'
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -56,114 +57,116 @@ function WhaleTracker({ whales, t, symbol }: any) {
   const classes = useStyles()
 
   return (
-    <Grid container className={classes.grid}>
-      <Grid item xs={12} className={classes.grid}>
-        <Paper elevation={3} className={classes.header}>
-          <Grid container alignItems="center" alignContent="space-around">
-            <Grid item xs className={classes.iconButton}>
-              <NextLink href="/" passHref prefetch={false}>
-                <IconButton color="inherit">
-                  <ForwardIcon className={classes.flippedIcon} />
-                </IconButton>
-              </NextLink>
-            </Grid>
-            <Grid item xs className={classes.center}>
-              <Typography variant="h6" align="center">
-                <Link
-                  color="inherit"
-                  rel="noopener"
-                  target="_blank"
-                  href={`https://poocoin.app/tokens/${t}`}
-                >
-                  {symbol}
-                </Link>
-              </Typography>
-            </Grid>
-            <Grid item xs></Grid>
-          </Grid>
-        </Paper>
-      </Grid>
-      <Grid item xs={12} className={classes.grid}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableBody>
-              {whales.map((whale: any) => {
-                // In future use market cap to scale "big amount"
-                const isBigAmount = whale.amount > 100000
-                const isBuy = whale.type === 'Buy'
-                const isSell = whale.type === 'Sell'
-                const getClass = (
-                  classSell: string,
-                  classBuy: string,
-                  precond: boolean
-                ) => {
-                  if (!precond) {
-                    return ''
-                  } else {
-                    if (isBuy) return classBuy
-                    else if (isSell) return classSell
-                    else return ''
-                  }
-                }
-                const txAmountClass = getClass(
-                  classes.txtSell,
-                  classes.txtBuy,
-                  !isBigAmount
-                )
-                const txRowClass = getClass(
-                  classes.rowSell,
-                  classes.rowBuy,
-                  isBigAmount
-                )
-                return (
-                  <TableRow
-                    key={`tx-${whale.hash}${whale.type}${whale.amount}`}
-                    className={txRowClass}
+    <Zoom in={true}>
+      <Grid container className={classes.grid}>
+        <Grid item xs={12} className={classes.grid}>
+          <Paper elevation={3} className={classes.header}>
+            <Grid container alignItems="center" alignContent="space-around">
+              <Grid item xs className={classes.iconButton}>
+                <NextLink href="/" passHref prefetch={false}>
+                  <IconButton color="inherit">
+                    <ForwardIcon className={classes.flippedIcon} />
+                  </IconButton>
+                </NextLink>
+              </Grid>
+              <Grid item xs className={classes.center}>
+                <Typography variant="h6" align="center">
+                  <Link
+                    color="inherit"
+                    rel="noopener"
+                    target="_blank"
+                    href={`https://poocoin.app/tokens/${t}`}
                   >
-                    <TableCell align="center">
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        className={txAmountClass}
-                      >
-                        ${numberWithCommas(whale.amount.toFixed(0))}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography component="span" variant="body2">
-                        {format(new Date(whale.date), 'M/d/yy p')}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Link
-                        href={`https://bscscan.com/tx/${whale.hash}`}
-                        color="inherit"
-                        rel="noopener"
-                        target="_blank"
-                      >
-                        Tx
-                      </Link>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="caption">
+                    {symbol}
+                  </Link>
+                </Typography>
+              </Grid>
+              <Grid item xs></Grid>
+            </Grid>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} className={classes.grid}>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableBody>
+                {whales.map((whale: any) => {
+                  // In future use market cap to scale "big amount"
+                  const isBigAmount = whale.amount > 100000
+                  const isBuy = whale.type === 'Buy'
+                  const isSell = whale.type === 'Sell'
+                  const getClass = (
+                    classSell: string,
+                    classBuy: string,
+                    precond: boolean
+                  ) => {
+                    if (!precond) {
+                      return ''
+                    } else {
+                      if (isBuy) return classBuy
+                      else if (isSell) return classSell
+                      else return ''
+                    }
+                  }
+                  const txAmountClass = getClass(
+                    classes.txtSell,
+                    classes.txtBuy,
+                    !isBigAmount
+                  )
+                  const txRowClass = getClass(
+                    classes.rowSell,
+                    classes.rowBuy,
+                    isBigAmount
+                  )
+                  return (
+                    <TableRow
+                      key={`tx-${whale.hash}${whale.type}${whale.amount}`}
+                      className={txRowClass}
+                    >
+                      <TableCell align="center">
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          className={txAmountClass}
+                        >
+                          ${numberWithCommas(whale.amount.toFixed(0))}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography component="span" variant="body2">
+                          {format(new Date(whale.date), 'M/d/yy p')}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
                         <Link
+                          href={`https://bscscan.com/tx/${whale.hash}`}
                           color="inherit"
                           rel="noopener"
                           target="_blank"
-                          href={`https://bscscan.com/token/${t}?a=${whale.address}`}
                         >
-                          Logs
+                          Tx
                         </Link>
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="caption">
+                          <Link
+                            color="inherit"
+                            rel="noopener"
+                            target="_blank"
+                            href={`https://bscscan.com/token/${t}?a=${whale.address}`}
+                          >
+                            Logs
+                          </Link>
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
       </Grid>
-    </Grid>
+    </Zoom>
   )
 }
 

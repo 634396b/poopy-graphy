@@ -2,19 +2,19 @@ import type { GetServerSideProps } from 'next'
 
 import React from 'react'
 
+import NextLink from 'next/link'
 import Head from 'next/head'
+
 import ForwardIcon from '@material-ui/icons/Forward'
 import Grid from '@material-ui/core/Grid'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import Paper from '@material-ui/core/Paper'
-import LinearProgress from '@material-ui/core/LinearProgress'
 import Typography from '@material-ui/core/Typography'
 import makeStyles from '@material-ui/core/styles/makeStyles'
-import NextLink from 'next/link'
-import redis from '$/core/redis'
+import Grow from '@material-ui/core/Grow'
 
-import { useRouter } from 'next/router'
+import redis from '$/core/redis'
 
 type HashSymbol = string
 interface TokenHashes {
@@ -29,15 +29,6 @@ const useStyles = makeStyles((theme) => ({
 
 function Tokens({ tokens }: { tokens: TokenHashes }) {
   const classes = useStyles()
-  const router = useRouter()
-  const [isLoading, setIsLoading] = React.useState(false)
-  const handleClick = (e: any) => {
-    // Do not set loading state if user opens a new tab.
-    // Middle mouse key does not trigger handleClick()
-    if (!e?.ctrlKey) {
-      setIsLoading(true)
-    }
-  }
   return (
     <>
       <Head>
@@ -47,7 +38,6 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
           content="Whale spotting from the comfort of your home"
         />
       </Head>
-      {isLoading && <LinearProgress />}
       <Grid container className={classes.root}>
         <Grid item xs={12}>
           <Paper>
@@ -56,27 +46,29 @@ function Tokens({ tokens }: { tokens: TokenHashes }) {
                 const symbol = tokens[contractHash]
                 const whalePage = `/whales/${contractHash}`
                 return (
-                  <Grid container alignItems="center" key={contractHash}>
-                    <NextLink href={whalePage} passHref>
-                      <ListItem button onClick={handleClick} component="a">
-                        <Grid container item xs alignItems="center">
-                          <Grid item xs={11}>
-                            <Typography component="span" variant="h6">
-                              {symbol}
-                            </Typography>{' '}
+                  <Grow in={true} key={contractHash} unmountOnExit>
+                    <Grid container alignItems="center">
+                      <NextLink href={whalePage} passHref>
+                        <ListItem button component="a">
+                          <Grid container item xs alignItems="center">
+                            <Grid item xs={11}>
+                              <Typography component="span" variant="h6">
+                                {symbol}
+                              </Typography>{' '}
+                            </Grid>
+                            <Grid item xs={12}>
+                              <Typography component="span" variant="caption">
+                                {contractHash}
+                              </Typography>
+                            </Grid>
                           </Grid>
-                          <Grid item xs={12}>
-                            <Typography component="span" variant="caption">
-                              {contractHash}
-                            </Typography>
+                          <Grid item xs={1}>
+                            <ForwardIcon />
                           </Grid>
-                        </Grid>
-                        <Grid item xs={1}>
-                          <ForwardIcon />
-                        </Grid>
-                      </ListItem>
-                    </NextLink>
-                  </Grid>
+                        </ListItem>
+                      </NextLink>
+                    </Grid>
+                  </Grow>
                 )
               })}
             </List>

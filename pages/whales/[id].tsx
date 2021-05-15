@@ -21,6 +21,7 @@ function Whales(props: any) {
           content="Displays trades on Binance Smart Chain from the top wallets"
         />
       </Head>
+      {/* When a token has not been discovered by fallback */}
       {router.isFallback ? <LinearProgress /> : <WhaleTracker {...props} />}
     </>
   )
@@ -32,21 +33,30 @@ export const getStaticPaths: GetStaticPaths = async () => {
     fallback: true,
   }
 }
+
 export const getStaticProps: GetStaticProps = async (context) => {
+  const notFoundRevalidate = { notFound: true, revalidate: 24, props: {} }
   const t = ((context?.params?.id ?? '') as string)?.toLowerCase()
+  // Pre-condition: Token must be hex-like
   const isHexLike = web3.utils.isHexStrict(t)
+  // Return notFound and do not allow revalidating
   if (!isHexLike) return { notFound: true }
-  const isExpired = (await redis.ttl(t)) <= 0
+  // Pre-condition: Is allowed to fetch again
+  const isExpired = (await redis.ttl(`ttl:${t}`)) <= 0
+  // Return previously cached data
   if (!isExpired) {
     return { props: JSON.parse((await redis.get(t)) ?? '{}') }
   }
-  redis.expire(t, Math.round(Math.random() * 10 + 33))
+  // Re-set expiration now in case of error
+  redis.setex(`ttl:${t}`, Math.round(Math.random() * 10 + 33), '')
+  // Retrieve trades
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
-  if (!dexTrades || !Array.isArray(dexTrades))
-    return { notFound: true, revalidate: 24 }
-  if (dexTrades.length === 0) return { notFound: true, revalidate: 24 }
+  // Return not found for any errors and allow revalidation
+  if (!dexTrades || !Array.isArray(dexTrades)) return notFoundRevalidate
+  if (dexTrades.length === 0) return notFoundRevalidate
   const symbol = dexTrades[0].baseCurrency?.symbol as string
 
+  // Transform data
   const whales = dexTrades.map(
     ({ transaction, block, buyAmountInUsd, sellAmountInUsd }) => {
       const hash = transaction?.hash
@@ -68,11 +78,13 @@ export const getStaticProps: GetStaticProps = async (context) => {
     t,
     symbol,
   }
+
+  // Cache result & symbol
   await redis.hmset('tokens', t, symbol)
   await redis.set(t, JSON.stringify(props))
   return {
     props,
-    revalidate: 24,
+    revalidate: 30,
   }
 }
 

@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '5vw',
   },
 }))
+
 export default function Custom404() {
   const classes = useStyles()
   return (
