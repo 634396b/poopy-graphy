@@ -109,7 +109,7 @@ function WhaleTracker({ whales, t, symbol, volume, buy, sell }: any) {
           <TableContainer component={Paper}>
             <Table>
               <TableBody>
-                {whales.map((whale: any) => {
+                {whales?.map((whale: any) => {
                   // In future use market cap to scale "big amount"
                   const isBigAmount = whale.amount > 100000
                   const isBuy = whale.type === 'Buy'
