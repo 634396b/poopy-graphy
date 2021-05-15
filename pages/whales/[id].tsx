@@ -35,7 +35,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const notFoundRevalidate = { notFound: true, revalidate: 24, props: {} }
+  const notFoundRevalidate = { notFound: true, revalidate: 60, props: {} }
   const t = ((context?.params?.id ?? '') as string)?.toLowerCase()
   // Pre-condition: Token must be hex-like
   const isHexLike = web3.utils.isHexStrict(t)
@@ -45,12 +45,16 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const isExpired = (await redis.ttl(`ttl:${t}`)) <= 0
   // Return previously cached data
   if (!isExpired) {
-    return { props: JSON.parse((await redis.get(t)) ?? '{}') }
+    const cachedWhales = await redis.get(t)
+    if (!cachedWhales) {
+      return notFoundRevalidate
+    } else {
+      return { props: JSON.parse(cachedWhales) }
+    }
   }
   // Re-set expiration now in case of error
-  redis.setex(`ttl:${t}`, Math.round(Math.random() * 10 + 33), '')
+  redis.setex(`ttl:${t}`, Math.round(Math.random() * 20 + 20), '')
   // Retrieve trades
-  const cachedVolume = await redis.hget('volume', t)
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   // Return not found for any errors and allow revalidation
   if (!dexTrades || !Array.isArray(dexTrades)) return notFoundRevalidate
