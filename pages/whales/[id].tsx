@@ -99,7 +99,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   redis.set(t, JSON.stringify(props))
   return {
     props,
-    revalidate: 30,
+    revalidate: 5,
   }
 }
 
