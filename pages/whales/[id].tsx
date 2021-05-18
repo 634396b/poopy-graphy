@@ -53,7 +53,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
   }
   // Re-set expiration now in case of error
-  redis.setex(`ttl:${t}`, Math.round(Math.random() * 20 + 20), '')
+  redis.setex(`ttl:${t}`, 20, '')
   // Retrieve trades
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   // Return not found for any errors and allow revalidation
