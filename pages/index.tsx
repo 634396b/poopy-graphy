@@ -86,7 +86,7 @@ export const getStaticProps: GetServerSideProps = async () => {
     props: {
       tokens,
     },
-    revalidate: 1,
+    revalidate: 5,
   }
 }
 

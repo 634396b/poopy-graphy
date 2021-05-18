@@ -35,7 +35,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const notFoundRevalidate = { notFound: true, revalidate: 60, props: {} }
+  const notFoundRevalidate = { notFound: true, revalidate: 25, props: {} }
   const t = ((context?.params?.id ?? '') as string)?.toLowerCase()
   // Pre-condition: Token must be hex-like
   const isHexLike = web3.utils.isHexStrict(t)
@@ -99,7 +99,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   redis.set(t, JSON.stringify(props))
   return {
     props,
-    revalidate: 1,
+    revalidate: 5,
   }
 }
 
