@@ -6,7 +6,7 @@ const getWhales = async (token = '') => {
   if (isHexLike) {
     console.log('Fetching new whales', new Date())
     const p = 24069
-    const whales = await getWhalesTrades(token, new Date(2021, 1, 1), p, 1000)
+    const whales = await getWhalesTrades(token, new Date(2021, 1, 1), p, 10000)
     return whales
   } else {
     return null
