@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
     color: red[900],
   },
 }))
-const addr = '0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459'
 export default function Footer() {
   const classes = useStyles()
   return (
@@ -21,9 +20,9 @@ export default function Footer() {
       <BottomNavigationAction
         style={{ maxWidth: 'unset' }}
         color="inherit"
-        label={`${addr}`}
+        label={`0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459`}
         icon={<FavoriteIcon className={classes.heart} />}
-        href={`https://bscscan.com/address/${addr}`}
+        href={`https://app.1inch.io/#/r/0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459`}
         target="_blank"
         rel="noopener"
       />
