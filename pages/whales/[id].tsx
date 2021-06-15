@@ -30,35 +30,17 @@ function Whales(props: any) {
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: [],
-    fallback: true,
+    fallback: 'blocking',
   }
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const notFoundRevalidate = { notFound: true, revalidate: 25, props: {} }
-  const t = ((context?.params?.id ?? '') as string)?.toLowerCase()
-  // Pre-condition: Token must be hex-like
-  const isHexLike = web3.utils.isHexStrict(t)
-  // Return notFound and do not allow revalidating
-  if (!isHexLike) return { notFound: true }
-  // Pre-condition: Is allowed to fetch again
-  const isExpired = (await redis.ttl(`ttl:${t}`)) <= 0
-  // Return previously cached data
-  if (!isExpired) {
-    const cachedWhales = await redis.get(t)
-    if (!cachedWhales) {
-      return notFoundRevalidate
-    } else {
-      return { props: JSON.parse(cachedWhales) }
-    }
-  }
-  // Re-set expiration now in case of error
-  redis.setex(`ttl:${t}`, 20, '')
+async function nonBlockingFetch(t) {
   // Retrieve trades
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   // Return not found for any errors and allow revalidation
-  if (!dexTrades || !Array.isArray(dexTrades)) return notFoundRevalidate
-  if (dexTrades.length === 0) return notFoundRevalidate
+  if (!dexTrades || !Array.isArray(dexTrades))
+    return { notFound: true, revalidate: 20 }
+  if (dexTrades.length === 0) return { notFound: true, revalidate: 20 }
   const symbol = dexTrades[0].baseCurrency?.symbol as string
   let volume = 0
   const buy = { high: 0 }
@@ -97,9 +79,33 @@ export const getStaticProps: GetStaticProps = async (context) => {
   redis.hmset('tokens', t, symbol)
   redis.hmset('volume', t, volume)
   redis.set(t, JSON.stringify(props))
+}
+export const getStaticProps: GetStaticProps = async (context) => {
+  const t = ((context?.params?.id ?? '') as string)?.toLowerCase()
+  // Pre-condition: Token must be hex-like
+  const isHexLike = web3.utils.isHexStrict(t)
+  // Return notFound and do not allow revalidating
+  if (!isHexLike) return { notFound: true }
+  // Pre-condition: Is allowed to fetch again
+  const isExpired = (await redis.ttl(`ttl:${t}`)) <= 0
+  // Return previously cached data
+  if (!isExpired) {
+    const cachedWhales = await redis.get(t)
+    if (!cachedWhales) {
+      console.log('NO CACHED WHALES FOUND')
+      return { notFound: true, revalidate: 20 }
+    } else {
+      console.log('CACHED WHALES FOUND')
+      return { props: JSON.parse(cachedWhales) }
+    }
+  }
+  // Re-set expiration now in case of error
+  redis.setex(`ttl:${t}`, 20, '')
+  nonBlockingFetch(t)
+  const cachedWhales = (await redis.get(t)) ?? '{}'
   return {
-    props,
-    revalidate: 25,
+    props: JSON.parse(cachedWhales),
+    revalidate: 1,
   }
 }
 

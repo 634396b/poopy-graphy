@@ -2,7 +2,11 @@ export const graphqlEndpoint = 'https://graphql.bitquery.io'
 export const graphqlQueriesEndpoint =
   'https://graphql.bitquery.io/ide/api/getqueries'
 
+const BITQUERY_API_KEY = process.env.BITQUERY_API_KEY as string
 export function getHeaders() {
+  if (!process.env.BITQUERY_API_KEY) {
+    throw new Error('No BITQUERY_API_KEY')
+  }
   return {
     headers: {
       accept: 'application/json',
@@ -12,7 +16,7 @@ export function getHeaders() {
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-origin',
       'sec-gpc': '1',
-      'X-API-KEY': process.env.BITQUERY_API_KEY as string,
+      'X-API-KEY': BITQUERY_API_KEY,
     },
     referrer: 'https://graphql.bitquery.io/ide',
     referrerPolicy: 'strict-origin-when-cross-origin' as ReferrerPolicy,
