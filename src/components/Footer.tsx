@@ -4,7 +4,7 @@ import {
   makeStyles,
 } from '@material-ui/core'
 import red from '@material-ui/core/colors/red'
-import FavoriteIcon from '@material-ui/icons/Favorite'
+import FavoriteIcon from '@material-ui/icons/AttachMoney'
 const useStyles = makeStyles((theme) => ({
   root: {
     color: '#fff',
@@ -20,9 +20,9 @@ export default function Footer() {
       <BottomNavigationAction
         style={{ maxWidth: 'unset' }}
         color="inherit"
-        label={`0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459`}
+        label={`Non-KYC Exchange`}
         icon={<FavoriteIcon className={classes.heart} />}
-        href={`https://app.1inch.io/#/r/0x6257d93ABdb970f1cB35EcB872CF9b13AE0d0459`}
+        href={`https://www.coinex.com/register?refer_code=r7cy2`}
         target="_blank"
         rel="noopener"
       />
