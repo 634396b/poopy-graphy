@@ -34,7 +34,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-async function nonBlockingFetch(t) {
+async function nonBlockingFetch(t: string) {
   // Retrieve trades
   const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
   // Return not found for any errors and allow revalidation
