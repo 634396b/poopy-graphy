@@ -11,7 +11,7 @@ import useRemoveSSR from '$/ui/hooks/useRemoveSSR'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Grid from '@material-ui/core/Grid'
 import { ThemeProvider } from '@material-ui/core/styles'
-import * as gtag from '$/core/analytics/gtag'
+import * as gtag from '$/ui/analytics/gtag'
 
 function App({ Component, pageProps }: AppProps) {
   const [theme, toggleDarkMode] = useCustomTheme()

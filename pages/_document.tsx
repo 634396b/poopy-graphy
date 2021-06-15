@@ -8,7 +8,7 @@ import Document, {
 } from 'next/document'
 import { ServerStyleSheets } from '@material-ui/core/styles'
 import { palette } from '../styles/theme'
-import { GA_TRACKING_ID } from '$/core/analytics/gtag'
+import { GA_TRACKING_ID } from '$/ui/analytics/gtag'
 
 export default class _Document extends Document {
   render() {

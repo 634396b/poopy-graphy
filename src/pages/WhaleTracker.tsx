@@ -12,7 +12,7 @@ import format from 'date-fns/format'
 import TableContainer from '@material-ui/core/TableContainer'
 import ForwardIcon from '@material-ui/icons/Forward'
 
-import { numberWithCommas } from '$/core/util/strings'
+import { numberWithCommas } from '$/ui/util/strings'
 import IconButton from '@material-ui/core/IconButton'
 import NextLink from 'next/link'
 

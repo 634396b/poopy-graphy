@@ -3,12 +3,16 @@ import type { GetStaticPaths, GetStaticProps } from 'next'
 import React from 'react'
 
 import Head from 'next/head'
-import getWhales from '$/core/whales/getWhales'
 import WhaleTracker from 'src/pages/WhaleTracker'
 import { useRouter } from 'next/router'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import redis from '$/core/redis'
+import fetch from 'node-fetch'
 import web3 from 'web3'
+
+const FETCH_API_ENDPOINT = process.env.FETCH_API_ENDPOINT as string
+
+if (typeof window === 'undefined' && !FETCH_API_ENDPOINT)
+  throw new Error('Missing FETCH_API_ENDPOINT in env')
 
 function Whales(props: any) {
   const router = useRouter()
@@ -30,82 +34,25 @@ function Whales(props: any) {
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: [],
-    fallback: 'blocking',
+    fallback: true,
   }
 }
 
-async function nonBlockingFetch(t: string) {
-  // Retrieve trades
-  const dexTrades = (await getWhales(t as string))?.data?.ethereum?.dexTrades
-  // Return not found for any errors and allow revalidation
-  if (!dexTrades || !Array.isArray(dexTrades))
-    return { notFound: true, revalidate: 20 }
-  if (dexTrades.length === 0) return { notFound: true, revalidate: 20 }
-  const symbol = dexTrades[0].baseCurrency?.symbol as string
-  let volume = 0
-  const buy = { high: 0 }
-  const sell = { high: 0 }
-  // Transform data
-  const whales = dexTrades.map(
-    ({ transaction, block, buyAmountInUsd, sellAmountInUsd }) => {
-      const hash = transaction?.hash
-      const address = transaction?.txFrom?.address ?? ''
-      const blockTime = block?.timestamp?.time
-
-      buy.high = Math.max(buyAmountInUsd ?? buy.high, buy.high)
-      sell.high = Math.max(sellAmountInUsd ?? sell.high, sell.high)
-
-      volume += buyAmountInUsd || sellAmountInUsd || 0
-      return {
-        amount: buyAmountInUsd || sellAmountInUsd,
-        type: buyAmountInUsd ? 'Buy' : 'Sell',
-        date: blockTime,
-        hash,
-        address,
-      }
-    }
-  )
-
-  const props = {
-    buy,
-    sell,
-    whales,
-    t,
-    symbol,
-    volume,
-  }
-
-  // Cache result & symbol
-  redis.hmset('tokens', t, symbol)
-  redis.hmset('volume', t, volume)
-  redis.set(t, JSON.stringify(props))
-}
 export const getStaticProps: GetStaticProps = async (context) => {
   const t = ((context?.params?.id ?? '') as string)?.toLowerCase()
   // Pre-condition: Token must be hex-like
   const isHexLike = web3.utils.isHexStrict(t)
   // Return notFound and do not allow revalidating
   if (!isHexLike) return { notFound: true }
-  // Pre-condition: Is allowed to fetch again
-  const isExpired = (await redis.ttl(`ttl:${t}`)) <= 0
-  // Return previously cached data
-  if (!isExpired) {
-    const cachedWhales = await redis.get(t)
-    if (!cachedWhales) {
-      console.log('NO CACHED WHALES FOUND')
-      return { notFound: true, revalidate: 20 }
-    } else {
-      console.log('CACHED WHALES FOUND')
-      return { props: JSON.parse(cachedWhales) }
-    }
+  const url = new URL(FETCH_API_ENDPOINT)
+  url.searchParams.append('t', t)
+  const { props = {}, error = false } = await (await fetch(url))?.json()
+  if (error) {
+    return { notFound: true, revalidate: 5 }
   }
-  // Re-set expiration now in case of error
-  redis.setex(`ttl:${t}`, 20, '')
-  nonBlockingFetch(t)
-  const cachedWhales = (await redis.get(t)) ?? '{}'
   return {
-    props: JSON.parse(cachedWhales),
-    revalidate: 1,
+    props: props,
+    revalidate: 5,
   }
 }
 
