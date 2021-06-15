@@ -48,11 +48,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
   url.searchParams.append('t', t)
   const { props = {}, error = false } = await (await fetch(url))?.json()
   if (error) {
-    return { notFound: true, revalidate: 5 }
+    return { notFound: true, revalidate: 60 }
   }
   return {
     props: props,
-    revalidate: 5,
+    revalidate: 60,
   }
 }
 
