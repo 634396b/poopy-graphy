@@ -1,6 +1,6 @@
 const moduleExports = {
   poweredByHeader: false,
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
 }
 
 module.exports = moduleExports
