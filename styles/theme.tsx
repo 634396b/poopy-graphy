@@ -1,6 +1,6 @@
 import brown from '@material-ui/core/colors/brown'
-import { useMemo, useState } from 'react'
-import createMuiTheme from '@material-ui/core/styles/createMuiTheme'
+import { useState } from 'react'
+import { createTheme } from '@material-ui/core/styles'
 import useLocalStorage from 'react-use/lib/useLocalStorage'
 
 export const palette = {
@@ -18,7 +18,7 @@ function useCustomTheme() {
     _setDarkMode(mode)
     _setLocalDarkMode(mode)
   }
-  const appTheme = createMuiTheme({
+  const appTheme = createTheme({
     palette: {
       ...palette,
       type: isDarkMode,

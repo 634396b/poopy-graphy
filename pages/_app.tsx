@@ -32,7 +32,7 @@ function App({ Component, pageProps }: AppProps) {
       <Grid
         container
         direction="column"
-        justify="space-between"
+        justifyContent="space-between"
         alignItems="stretch"
         wrap="nowrap"
         style={{ minHeight: '100%' }}

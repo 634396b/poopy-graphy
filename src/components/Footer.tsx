@@ -9,9 +9,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     color: '#fff',
   },
-  heart: {
-    color: red[900],
-  },
+  heart: {},
 }))
 export default function Footer() {
   const classes = useStyles()
